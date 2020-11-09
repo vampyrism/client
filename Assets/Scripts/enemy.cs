@@ -9,7 +9,7 @@ public class enemy : MonoBehaviour
     float moveLimiter = 0.7f;
 
     public float runSpeed = 0.5f;
-    public int MinDistance = 1;
+    public float MinDistance = 0.5f;
 
     private Transform target;
     private Animator animator;
