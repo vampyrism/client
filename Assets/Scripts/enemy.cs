@@ -18,7 +18,7 @@ public class enemy : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         animator  = GetComponent<Animator>();
-        target = GameObject.FindGameObjectWithTag ("Player").transform;
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
@@ -26,8 +26,8 @@ public class enemy : MonoBehaviour
         transform.right = target.position - transform.position;
 
         //move if distance from target is greater than MinDist
-        if (Vector3.Distance(transform.position, target.position) > MinDistance){
-
+        if (Vector3.Distance(transform.position, target.position) > MinDistance)
+        {
             transform.position = Vector2.MoveTowards(transform.position, target.position, runSpeed * Time.deltaTime);
         } else {
             animator.SetTrigger("enemyAttack");
