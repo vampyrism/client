@@ -43,5 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab2fe8403cb47461f8f9ec40121dd03e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cone: {fileID: 2538806446826906365, guid: d16b9a110639b4aae8a91f81a0f19241, type: 3}
+  cone: {fileID: 0}
   isDay: 1
