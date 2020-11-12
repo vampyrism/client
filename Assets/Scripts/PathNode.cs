@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PathNode
 {
-
     private Grid<PathNode> grid;
     public int x;
     public int y; 

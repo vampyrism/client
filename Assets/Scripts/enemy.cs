@@ -29,25 +29,25 @@ public class enemy : MonoBehaviour
 
     void Update()
     {
-        transform.right = target.position - transform.position;
+        
         HandleMovement();
     }
 
     public void HandleMovement() {
         if (pathVectorList != null) {
             Vector3 targetPosition = pathVectorList[currentPathIndex];
-            //Debug.Log("targetPosition: " + targetPosition);
+            transform.right = targetPosition - transform.position;
             
             if (Vector3.Distance(transform.position, targetPosition) > 1f) {
                 Vector3 moveDir = (targetPosition - transform.position).normalized;
-
-                float distanceBefore = Vector3.Distance(transform.position, targetPosition);
-                transform.position = transform.position + moveDir*runSpeed * Time.deltaTime;
+                body.velocity = new Vector3(moveDir.x * runSpeed, moveDir.y * runSpeed);
+                
             } else {
                 currentPathIndex++;
                 if (currentPathIndex >= pathVectorList.Count) {
                     //Found the position of the list, stop moving or find new target
                     pathVectorList = null;
+                    body.velocity = new Vector3(0,0,0);
                 }
             }
         } else {
