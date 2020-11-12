@@ -5,6 +5,10 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
+    private Pathfinding pathfinding;
+
+    public int gridHeight;
+    public int gridWidth;
 
     void Awake()
     {
@@ -14,6 +18,11 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        gridHeight = 25;
+        gridWidth = 25;
+
+        pathfinding = new Pathfinding(gridHeight, gridWidth);
 
         DontDestroyOnLoad(gameObject);
         
@@ -25,7 +34,7 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         //cone = gameObject.GetComponent(typeof(VisionCone)) as VisionCone; //this does not work
-        cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
+        //cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
     }
 
     float timeLeft = 5.0f;
