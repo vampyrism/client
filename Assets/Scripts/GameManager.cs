@@ -33,7 +33,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        Debug.Log("Game Manager before pathfinding");
         pathfinding = new Pathfinding(gridHeight, gridWidth);
+        
+        Debug.Log("Game Manager after pathfinding");
         Grid<PathNode> grid = pathfinding.GetGrid();
         
         for (int x = 0; x < gridWidth; x++) {
@@ -89,6 +92,8 @@ public class GameManager : MonoBehaviour
 
         menuImage = GameObject.Find("MenuImage");
         menuImage.SetActive(true);
+
+        Debug.Log("Do I get here?");
         
         Instantiate(enemyPrefab, new Vector3(10f, 10f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(14f, 14f), Quaternion.identity);

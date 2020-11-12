@@ -181,3 +181,5 @@ MonoBehaviour:
   y: 0
   vx: 0
   vy: 0
+  intendedVx: 0
+  intendedVy: 0

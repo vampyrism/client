@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class follow : MonoBehaviour
+public class Follow : MonoBehaviour
 {
     public Transform target;
 
@@ -16,8 +16,6 @@ public class follow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 whereToView = target.position;
-        whereToView.z = -10;
-        transform.position = whereToView;
+        transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
     }
 }

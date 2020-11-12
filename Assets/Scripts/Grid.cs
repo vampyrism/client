@@ -25,15 +25,21 @@ public class Grid<TGridObject>
             }
         }
 
+        
+        Debug.Log("Grid before draws");
         for (int x=0; x < gridArray.GetLength(0); x++) {
             for (int y = 0; y < gridArray.GetLength(1); y++) {
+                Debug.Log("Before drawing the line");
                 Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
                 Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
             }
         }
         Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
         Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+        
+    Debug.Log("Grid after draws");
     }
+    
 
     private Vector3 GetWorldPosition(int x, int y) {
         return new Vector3(x, y) * cellSize + originPosition;

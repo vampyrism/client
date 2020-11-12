@@ -16,7 +16,11 @@ public class Pathfinding
 
     public Pathfinding (int width, int height) {
         Instance = this;
+        
+        Debug.Log("Pathfinding before grid");
         grid = new Grid<PathNode>(width, height, 1f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+        
+        Debug.Log("Pathfinding after grid");
     }
 
     public Grid<PathNode> GetGrid() {
