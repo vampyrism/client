@@ -28,9 +28,12 @@ public class enemy : MonoBehaviour
         //move if distance from target is greater than MinDist
         if (Vector3.Distance(transform.position, target.position) > MinDistance)
         {
-            transform.position = Vector2.MoveTowards(transform.position, target.position, runSpeed * Time.deltaTime);
+            Vector2 v = target.position - transform.position;
+            v.Normalize();
+            body.velocity = new Vector2(v.x * runSpeed, v.y * runSpeed);
         } else {
             animator.SetTrigger("enemyAttack");
+            body.velocity = new Vector2(0, 0);
         }
     }
 }
