@@ -29,9 +29,9 @@ public class enemy : MonoBehaviour
 
     void Update()
     {
-        
         HandleMovement();
     }
+
 
     public void HandleMovement() {
         if (pathVectorList != null) {

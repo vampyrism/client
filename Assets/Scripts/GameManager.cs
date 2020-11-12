@@ -1,10 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
+
+    
+    private GameObject menuImage;
+    private bool onMenu;
+
     private Pathfinding pathfinding;
 
     public int gridHeight = 25;
@@ -16,7 +22,7 @@ public class GameManager : MonoBehaviour
     float timeLeft = 5.0f;
     public bool isDay = true;
     public bool isNight = false;
-    private Camera cam;
+
 
     void Awake()
     {
@@ -72,46 +78,62 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         
         InitGame();
-
-
-        cam = Camera.main;
-    }
+        }
 
     private VisionCone cone;
 
     void InitGame()
     {
-        //cone = gameObject.GetComponent(typeof(VisionCone)) as VisionCone; //this does not work
-        //cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
+        onMenu = true;
+        cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
 
+        menuImage = GameObject.Find("MenuImage");
+        menuImage.SetActive(true);
+        
         Instantiate(enemyPrefab, new Vector3(10f, 10f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(14f, 14f), Quaternion.identity);
+    }
+
+    private void hideMenuImage()
+    {
+        menuImage.SetActive(false);
     }
     
     void Update()
     {
-        if (Input.GetMouseButtonDown (0)) {
-            Debug.Log ("mouseDown = " + cam.ScreenToWorldPoint(Input.mousePosition));
-        }
-        timeLeft -= Time.deltaTime;
-        if (isDay)
+        if (onMenu)
+
         {
-            if (timeLeft < 0)
+            if (Input.GetKeyDown(KeyCode.Return))
             {
-                isDay = false;
-                isNight = true;
-                timeLeft += 10.0f;
-                //cone.showCone();
+                hideMenuImage();
+                onMenu = false;
+                timeLeft = 5.0f;
+
             }
         }
         else
         {
-            if (timeLeft < 0)
+            timeLeft -= Time.deltaTime;
+            if (isDay)
             {
-                isDay = true;
-                isNight = false;
-                timeLeft += 5.0f;
-                //cone.hideCone();
+                if (timeLeft < 0)
+                {
+                    isDay = false;
+                    isNight = true;
+                    timeLeft += 10.0f;
+                    cone.showCone();
+                }
+            }
+            else
+            {
+                if (timeLeft < 0)
+                {
+                    isDay = true;
+                    isNight = false;
+                    timeLeft += 5.0f;
+                    cone.hideCone();
+                }
             }
         }
     }
