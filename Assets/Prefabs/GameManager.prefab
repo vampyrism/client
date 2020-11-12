@@ -43,5 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab2fe8403cb47461f8f9ec40121dd03e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cone: {fileID: 0}
+  gridHeight: 0
+  gridWidth: 0
+  enemyPrefab: {fileID: 941831820659159086, guid: ddf9604e5f608684e93362315932b0b4,
+    type: 3}
+  playerPrefab: {fileID: 5068978145896570117, guid: f210f073b3695ff438a7e6d0665ae538,
+    type: 3}
   isDay: 1
+  isNight: 0
