@@ -42,9 +42,70 @@ public class Pathfinding
         }
     }
 
-    public Vector3 FixCornerCollision(Vector3 targetPosition, Vector2 contactPosition) {
-        Vector3 newPosition = new Vector3(0,0);
-        return newPosition;
+    public Vector3 FixCornerCollision(Vector3 currentPosition, Vector3 targetPosition, Vector2 contactPosition) {
+        PathNode newTargetNode = new PathNode(grid, 0,0);
+
+        grid.GetXY(currentPosition, out int unitX, out int unitY);
+        grid.GetXY(targetPosition, out int targetX, out int targetY);
+        grid.GetXY(contactPosition, out int contactX, out int contactY);
+
+        Debug.Log("currentPosition: " + unitX + "," + unitY);
+        Debug.Log("targetPosition: " + targetX + "," + targetY);
+        Debug.Log("contactPosition: " + contactX + "," + contactY);
+
+        if (contactY < targetY) {
+            Debug.Log("Uppåt");
+            newTargetNode.x = unitX;
+            newTargetNode.y = contactY + 3;
+        } else if (contactX < targetX) {
+
+            Debug.Log("Höger");
+            newTargetNode.x = contactX + 3;
+            newTargetNode.y = unitY;
+        } else if (contactY > targetY) {
+
+            Debug.Log("Neråt");
+            newTargetNode.x = unitX;
+            newTargetNode.y = contactY - 3;
+        } else if (contactX > targetX) {
+            Debug.Log("Vänster");
+            newTargetNode.x = contactX - 3;
+            newTargetNode.y = unitY;
+        } else {
+            Debug.Log("Not handled case");
+            newTargetNode.x = targetX;
+            newTargetNode.y = targetY;
+        }
+
+        if (unitX == targetX && unitX == contactX) {
+            if (currentPosition.x > contactPosition.x) {
+                Debug.Log("Höger Bounce");
+                newTargetNode.x = targetX + 1;
+                newTargetNode.y = targetY;
+            } else {
+                Debug.Log("Vänster Bounce");
+                newTargetNode.x = targetX - 1;
+                newTargetNode.y = targetY;
+            }
+        } else if (unitY == targetY && unitY == contactY) {
+            if (currentPosition.y > contactPosition.y) {
+                Debug.Log("Uppåt Bounce ");
+                newTargetNode.x = targetX;
+                newTargetNode.y = targetY + 1;
+            } else {
+                Debug.Log("Nedåt Bounce ");
+                newTargetNode.x = targetX;
+                newTargetNode.y = targetY - 1;
+
+            }
+
+        }
+
+
+
+
+        Vector3 newTargetVector = new Vector3(newTargetNode.x, newTargetNode.y) * grid.GetCellsize() + Vector3.one * grid.GetCellsize() * .5f;
+        return newTargetVector;
     }
 
     private List<PathNode> FindPath(int startX, int startY, int endX, int endY) {
@@ -195,13 +256,16 @@ public class Pathfinding
         for (int x = 0; x < grid.GetWidth(); x++) {
             for (int y = 0; y < grid.GetHeight(); y++) {
                 PathNode pathNode = grid.GetGridObject(x, y);
-                pathNode.neighbourList = GetNeighbourList(pathNode);
+                pathNode.neighbourList = MakeNeighbourList(pathNode);
             }
         }
     }
 
-    public List<PathNode> GetNeighbourList(PathNode currentNode) {
+    public List<PathNode> MakeNeighbourList(PathNode currentNode) {
         List<PathNode> neighbourList = new List<PathNode>();
+        if (currentNode.isWalkable == false) {
+            return neighbourList;
+        }
         PathNode leftNode = GetNode(currentNode.x - 1, currentNode.y);
         PathNode rightNode = GetNode(currentNode.x + 1, currentNode.y);
         PathNode downNode = GetNode(currentNode.x, currentNode.y - 1);
@@ -209,8 +273,8 @@ public class Pathfinding
 
         if (currentNode.x - 1 >= 0) {
             // Left
+            neighbourList.Add(leftNode);
             if (leftNode.isWalkable == true) {
-                neighbourList.Add(leftNode);
                 // Left Down
                 if (currentNode.y - 1 >= 0 && downNode.isWalkable == true) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y - 1));
                 // Left Up
@@ -219,8 +283,8 @@ public class Pathfinding
         }
         if (currentNode.x + 1 < grid.GetWidth()) {
             // Right
+            neighbourList.Add(rightNode);
             if (rightNode.isWalkable == true) {
-                neighbourList.Add(rightNode);
                 // Right Down
                 if (currentNode.y - 1 >= 0 && downNode.isWalkable == true) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y - 1));
                 // Right Up
@@ -228,9 +292,9 @@ public class Pathfinding
             }
         }
         // Down
-        if (currentNode.y - 1 >= 0 && downNode.isWalkable == true) neighbourList.Add(downNode);
+        if (currentNode.y - 1 >= 0) neighbourList.Add(downNode);
         // Up
-        if (currentNode.y + 1 < grid.GetHeight() && upNode.isWalkable == true) neighbourList.Add(upNode);
+        if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(upNode);
 
         return neighbourList;
     }

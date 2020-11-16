@@ -72,13 +72,13 @@ public class Enemy : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
+       /*
         Debug.Log(body.velocity);
         Debug.Log(body.velocity.x);
         Debug.Log(body.velocity.x == 0);
-        Vector3 currentPathPosition = pathVectorList[currentPathIndex];
-
-        pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(pathVectorList[currentPathIndex], collision.GetContact(0).point);
-
+       */
+        pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
+        /*
         if (body.velocity.x < 0.01f) {
             Debug.Log("Inside if");
             if (currentPathPosition.x > transform.position.x) {
@@ -97,6 +97,7 @@ public class Enemy : MonoBehaviour
         } else {
             //body.AddForce(body.velocity, ForceMode2D.Impulse);
         }
+        */
         
        
     }

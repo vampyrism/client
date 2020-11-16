@@ -47,8 +47,8 @@ public class GameManager : MonoBehaviour
 
         //cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
 
-        Instantiate(enemyPrefab, new Vector3(20f, 20f), Quaternion.identity);
-        Instantiate(playerPrefab, new Vector3(28f, 28f), Quaternion.identity);
+        Instantiate(enemyPrefab, new Vector3(42f, 42f), Quaternion.identity);
+        Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
     }
 
     void SetupMenu()
