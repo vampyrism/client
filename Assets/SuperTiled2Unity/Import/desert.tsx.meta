@@ -15,7 +15,7 @@ ScriptedImporter:
   missingLayers: []
   missingTags: []
   importerVersion: 11
-  pixelsPerUnit: 32
+  pixelsPerUnit: 16
   edgesPerEllipse: 32
   numberOfObjectsImported: 99
   useSpriteAtlas: 1
