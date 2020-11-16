@@ -14,13 +14,14 @@ public class PathNode
 
     public bool isWalkable;
     public PathNode cameFromNode;
+    public List<PathNode> neighbourList;
 
     public PathNode(Grid<PathNode> grid, int x, int y) {
         this.grid = grid;
         this.x = x;
         this.y = y;
         isWalkable = true;
-
+        neighbourList = new List<PathNode>();
     }
 
     public void CalculateFCost() {

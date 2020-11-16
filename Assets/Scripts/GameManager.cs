@@ -9,9 +9,10 @@ public class GameManager : MonoBehaviour
 
     
     private GameObject menuImage;
-    private bool onMenu;
+    private bool onMenu = false;
 
     private Pathfinding pathfinding;
+    private VisionCone cone;
 
     public int gridHeight = 25;
     public int gridWidth = 25;
@@ -33,70 +34,28 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Game Manager before pathfinding");
         pathfinding = new Pathfinding(gridHeight, gridWidth);
-        
-        Debug.Log("Game Manager after pathfinding");
-        Grid<PathNode> grid = pathfinding.GetGrid();
-        
-        for (int x = 0; x < gridWidth; x++) {
-            for (int y = 0; y < gridHeight; y++) {
-
-                //Check collision in the middle of the square
-                Collider2D hit = Physics2D.OverlapPoint(new Vector2(x+0.5f, y+0.5f));
-
-                //Check collision in the bottom left part of the square
-                if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x+0.2f, y+0.2f));
-                }
-
-                //Check collision in the top left part of the square
-                if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x+0.2f, y+0.8f));
-                }
-
-                //Check collision in the top right part of the square
-                if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x+0.8f, y+0.8f));
-                }
-
-                //Check collision in the bottom right of the square
-                if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x+0.8f, y+0.2f));
-                }
-
-                if (hit != null) {
-                    grid.GetGridObject(x, y).isWalkable = false;
-                    Debug.Log(grid.GetGridObject(x, y));
-
-                    //Debugging the collision detection on the grid.
-                    Debug.Log("Found Collision here: " + x + "," + y);
-                    Debug.DrawLine(new Vector3(x, y+0.5f), new Vector3(x+1f, y+0.5f), Color.red, 100f);
-                    Debug.DrawLine(new Vector3(x+0.5f, y), new Vector3(x+0.5f, y+1f), Color.red, 100f);
-                }
-
-            }
-        }
 
         DontDestroyOnLoad(gameObject);
         
         InitGame();
-        }
-
-    private VisionCone cone;
+    }
 
     void InitGame()
     {
-        onMenu = true;
-        cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
+        //SetupMenu();
 
+        //cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
+
+        Instantiate(enemyPrefab, new Vector3(42f, 42f), Quaternion.identity);
+        Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
+    }
+
+    void SetupMenu()
+    {
         menuImage = GameObject.Find("MenuImage");
         menuImage.SetActive(true);
-
-        Debug.Log("Do I get here?");
-        
-        Instantiate(enemyPrefab, new Vector3(10f, 10f), Quaternion.identity);
-        Instantiate(playerPrefab, new Vector3(14f, 14f), Quaternion.identity);
+        onMenu = true;
     }
 
     private void hideMenuImage()
@@ -127,7 +86,7 @@ public class GameManager : MonoBehaviour
                     isDay = false;
                     isNight = true;
                     timeLeft += 10.0f;
-                    cone.showCone();
+                    //cone.showCone();
                 }
             }
             else
@@ -137,7 +96,7 @@ public class GameManager : MonoBehaviour
                     isDay = true;
                     isNight = false;
                     timeLeft += 5.0f;
-                    cone.hideCone();
+                    //cone.hideCone();
                 }
             }
         }

@@ -43,11 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab2fe8403cb47461f8f9ec40121dd03e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridHeight: 25
-  gridWidth: 25
-  enemyPrefab: {fileID: 941831820659159086, guid: ddf9604e5f608684e93362315932b0b4,
+  gridHeight: 50
+  gridWidth: 50
+  enemyPrefab: {fileID: 546481475594392271, guid: 81022744329490e4db7ce342cd30a1db,
     type: 3}
-  playerPrefab: {fileID: 5068978145896570117, guid: f210f073b3695ff438a7e6d0665ae538,
+  playerPrefab: {fileID: 7567568766520248273, guid: 35b0c9eac03967641b131a4479d591f9,
     type: 3}
   isDay: 1
   isNight: 0
