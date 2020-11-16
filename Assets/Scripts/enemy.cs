@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
             //transform.right = targetPosition - transform.position;
             Debug.DrawLine(transform.position, currentPathPosition, Color.green);
 
-            if (Vector3.Distance(transform.position, currentPathPosition) > 1f) {
+            if (Vector3.Distance(transform.position, currentPathPosition) > 2f) {
                 Vector3 moveDir = (currentPathPosition - transform.position).normalized;
                 body.velocity = new Vector2(moveDir.x * runSpeed, moveDir.y * runSpeed);
 
@@ -72,32 +72,9 @@ public class Enemy : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-       /*
-        Debug.Log(body.velocity);
-        Debug.Log(body.velocity.x);
-        Debug.Log(body.velocity.x == 0);
-       */
-        pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
-        /*
-        if (body.velocity.x < 0.01f) {
-            Debug.Log("Inside if");
-            if (currentPathPosition.x > transform.position.x) {
-                Debug.Log("Inside if 1");
-                if (body.velocity.y > 0) {
-                    Debug.Log("Inside if 11");
-                    body.AddForce(new Vector2(0, 1000000), ForceMode2D.Impulse);
-                } else {
-                    Debug.Log("Inside if 12");
-                    body.AddForce(new Vector2(0, -100), ForceMode2D.Impulse);
-                }
-            } else {
-                Debug.Log("Inside if 2");
-                transform.position = transform.position + new Vector3(10, 0);
-            }
-        } else {
-            //body.AddForce(body.velocity, ForceMode2D.Impulse);
-        }
-        */
+       
+        //pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
+
         
        
     }

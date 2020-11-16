@@ -17,7 +17,7 @@ public class Pathfinding
 
     public Pathfinding (int width, int height) {
         Instance = this;
-        grid = new Grid<PathNode>(width, height, 1f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+        grid = new Grid<PathNode>(width, height, 2f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         SetNodesIsWalkable();
         SetNeighbourLists();
     }
@@ -100,10 +100,6 @@ public class Pathfinding
             }
 
         }
-
-
-
-
         Vector3 newTargetVector = new Vector3(newTargetNode.x, newTargetNode.y) * grid.GetCellsize() + Vector3.one * grid.GetCellsize() * .5f;
         return newTargetVector;
     }
@@ -212,30 +208,32 @@ public class Pathfinding
     }
 
     private void SetNodesIsWalkable() {
+        float cellSize = grid.GetCellsize();
+        cellSize = 1f;
         for (int x = 0; x < grid.GetWidth(); x++) {
             for (int y = 0; y < grid.GetHeight(); y++) {
 
                 //Check collision in the middle of the square
-                Collider2D hit = Physics2D.OverlapPoint(new Vector2(x + 0.5f, y + 0.5f) * grid.GetCellsize());
+                Collider2D hit = Physics2D.OverlapPoint(new Vector2(x + (0.5f * cellSize), y + (0.5f * cellSize)) * grid.GetCellsize());
 
                 //Check collision in the bottom left part of the square
                 if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x + 0.2f, y + 0.2f) * grid.GetCellsize());
+                    hit = Physics2D.OverlapPoint(new Vector2(x + (0.2f * cellSize), y + (0.2f * cellSize)) * grid.GetCellsize());
                 }
 
                 //Check collision in the top left part of the square
                 if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x + 0.2f, y + 0.8f) * grid.GetCellsize());
+                    hit = Physics2D.OverlapPoint(new Vector2(x + (0.2f * cellSize), y + (0.8f * cellSize)) * grid.GetCellsize());
                 }
 
                 //Check collision in the top right part of the square
                 if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x + 0.8f, y + 0.8f) * grid.GetCellsize());
+                    hit = Physics2D.OverlapPoint(new Vector2(x + (0.8f * cellSize), y + (0.8f * cellSize)) * grid.GetCellsize());
                 }
 
                 //Check collision in the bottom right of the square
                 if (hit == null) {
-                    hit = Physics2D.OverlapPoint(new Vector2(x + 0.8f, y + 0.2f) * grid.GetCellsize());
+                    hit = Physics2D.OverlapPoint(new Vector2(x + (0.8f * cellSize), y + (0.2f * cellSize)) * grid.GetCellsize());
                 }
 
                 if (hit != null) {
@@ -243,8 +241,8 @@ public class Pathfinding
 
                     //Debugging the collision detection on the grid.
                     //Debug.Log("Found Collision here: " + x + "," + y);
-                    Debug.DrawLine(new Vector3(x, y + 0.5f) * grid.GetCellsize(), new Vector3(x + 1f, y + 0.5f) * grid.GetCellsize(), Color.red, 100f);
-                    Debug.DrawLine(new Vector3(x + 0.5f, y) * grid.GetCellsize(), new Vector3(x + 0.5f, y + 1f) * grid.GetCellsize(), Color.red, 100f);
+                    Debug.DrawLine(new Vector3(x, y + (0.5f * cellSize)) * grid.GetCellsize(), new Vector3(x + (1f * cellSize), y + (0.5f * cellSize)) * grid.GetCellsize(), Color.red, 100f);
+                    Debug.DrawLine(new Vector3(x + (0.5f * cellSize), y) * grid.GetCellsize(), new Vector3(x + (0.5f * cellSize), y + (1f * cellSize)) * grid.GetCellsize(), Color.red, 100f);
                 }
 
             }

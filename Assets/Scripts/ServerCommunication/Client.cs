@@ -9,7 +9,7 @@ using System.Threading;
 using System.IO;
 
 public class Client : MonoBehaviour
-{
+{/*
     public static Client instance;
     public static int BufferSize = 1024;
     public int myId = 0;
@@ -117,5 +117,5 @@ public class Client : MonoBehaviour
 
 
 
-
+    */
 }

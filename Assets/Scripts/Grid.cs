@@ -52,9 +52,6 @@ public class Grid<TGridObject>
         }
     }
 
-    //public void TriggerGridObjectChanged(int x, int y) {
-    //}
-
     public void SetGridObject(Vector3 worldPosition, TGridObject value) {
         int x, y;
         GetXY(worldPosition, out x, out y);

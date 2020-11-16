@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using UnityEngine;
 
 public class ClientSend : MonoBehaviour
-{
+{/*
 
 
     private static void SendDataUDP(Packet packet)
@@ -24,4 +24,5 @@ public class ClientSend : MonoBehaviour
             SendDataUDP(packet);
         }
     }
+    */
 }

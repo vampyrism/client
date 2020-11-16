@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VisionCone : MonoBehaviour
 {
-    SpriteRenderer sprite;
+    private SpriteRenderer sprite;
     // Start is called before the first frame update
     void Start()
     {

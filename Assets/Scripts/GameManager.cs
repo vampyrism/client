@@ -7,22 +7,24 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
 
-    
-    private GameObject menuImage;
-    private bool onMenu = false;
-
     private Pathfinding pathfinding;
-    private VisionCone cone;
+    
+    public VisionCone cone;
+    public Transform tileMap;
 
     public int gridHeight = 25;
     public int gridWidth = 25;
+    public int cellSize = 2;
 
     public GameObject enemyPrefab;
     public GameObject playerPrefab;
+    public GameObject bow;
 
-    float timeLeft = 5.0f;
     public bool isDay = true;
     public bool isNight = false;
+    public bool coneActivated = true;
+
+    private float timeLeft;
 
 
     void Awake()
@@ -34,8 +36,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        pathfinding = new Pathfinding(gridHeight, gridWidth);
-
         DontDestroyOnLoad(gameObject);
         
         InitGame();
@@ -43,62 +43,41 @@ public class GameManager : MonoBehaviour
 
     void InitGame()
     {
-        //SetupMenu();
+        timeLeft = 5.0f;
+        Instantiate(tileMap, new Vector3(0f, 50f), Quaternion.identity);
+        cone = Instantiate(cone);
+        pathfinding = new Pathfinding(gridHeight, gridWidth);
 
-        //cone = GameObject.FindGameObjectWithTag("visionCone").transform.GetComponent<VisionCone>();
-
-        Instantiate(enemyPrefab, new Vector3(42f, 42f), Quaternion.identity);
+        Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
-    }
-
-    void SetupMenu()
-    {
-        menuImage = GameObject.Find("MenuImage");
-        menuImage.SetActive(true);
-        onMenu = true;
-    }
-
-    private void hideMenuImage()
-    {
-        menuImage.SetActive(false);
+        Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
     }
     
     void Update()
-    {
-        if (onMenu)
-
+    {   
+        timeLeft -= Time.deltaTime;
+        if (isDay)
         {
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (timeLeft < 0)
             {
-                hideMenuImage();
-                onMenu = false;
-                timeLeft = 5.0f;
-
+                isDay = false;
+                isNight = true;
+                timeLeft += 10.0f;
+                if (coneActivated) {
+                    cone.showCone();
+                }
             }
         }
         else
         {
-            timeLeft -= Time.deltaTime;
-            if (isDay)
+            if (timeLeft < 0)
             {
-                if (timeLeft < 0)
-                {
-                    isDay = false;
-                    isNight = true;
-                    timeLeft += 10.0f;
-                    //cone.showCone();
-                }
-            }
-            else
-            {
-                if (timeLeft < 0)
-                {
-                    isDay = true;
-                    isNight = false;
-                    timeLeft += 5.0f;
-                    //cone.hideCone();
-                }
+                isDay = true;
+                isNight = false;
+                timeLeft += 5.0f;
+                cone.hideCone();
             }
         }
     }
+    
 }

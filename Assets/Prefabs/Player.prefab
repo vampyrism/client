@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7567568766520248274}
   - component: {fileID: 3413103406332204472}
   m_Layer: 8
-  m_Name: Player 1
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c84ec5c6dcb69d40801ef6552183c7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 15
+  player: {fileID: 0}
 --- !u!114 &3413103406332204472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,9 +177,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab5e4867496c4421a80ad15a470bb57c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runSpeed: 15
   x: 0
   y: 0
   vx: 0
   vy: 0
-  intendedVx: 0
-  intendedVy: 0
+  hasBow: 0
+  projectile: {fileID: 6764305579454125916, guid: 8941f1fd1714cc34d92ebdd7edb9b54f,
+    type: 3}
