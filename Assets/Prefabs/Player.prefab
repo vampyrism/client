@@ -183,5 +183,6 @@ MonoBehaviour:
   vx: 0
   vy: 0
   hasBow: 0
+  timeBetweenShots: 0.5
   projectile: {fileID: 6764305579454125916, guid: 8941f1fd1714cc34d92ebdd7edb9b54f,
     type: 3}

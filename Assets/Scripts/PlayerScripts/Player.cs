@@ -6,20 +6,20 @@ public class Player : MonoBehaviour {
     Rigidbody2D body;
     SpriteRenderer sprite;
 
-    float horizontal;
-    float vertical;
-    float moveLimiter = 0.7f;
-    public float runSpeed = 1.0f;
+    private float moveLimiter = 0.7f;
+    [SerializeField] private float runSpeed = 1.0f;
 
     public float x = 0.0f;
     public float y = 0.0f;
     public float vx = 0.0f;
     public float vy = 0.0f;
 
-    public bool hasBow = false;
+    [SerializeField] private bool hasBow = false;
+    [SerializeField] private bool hasCrossbow = false;
+    [SerializeField] private float reloadSpeed = 1f;
+    private float timestampForNextAction;
 
-    private GameObject equippedItem;
-    private GameObject itemOnFloor;
+    private Transform itemOnFloor;
     [SerializeField] private Transform projectile;
     
     // Start is called before the first frame update
@@ -39,7 +39,8 @@ public class Player : MonoBehaviour {
     }
 
     public void Move(float horizontal, float vertical) {
-        if (horizontal != 0 && vertical != 0) {// Check for diagonal movement
+        // Check for diagonal movement
+        if (horizontal != 0 && vertical != 0) {
             // limit movement speed diagonally, so you move at 70% speed
             horizontal *= moveLimiter;
             vertical *= moveLimiter;
@@ -52,7 +53,6 @@ public class Player : MonoBehaviour {
             sprite.flipX = false;
         }
 
-        //body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
         body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
     }
 
@@ -61,33 +61,48 @@ public class Player : MonoBehaviour {
             Debug.Log("Trying to grab an item when noone exist");
             return;
         }
-        if (itemOnFloor.transform.GetChild(0).gameObject.tag == "Bow") {
-            hasBow = true;
-            Destroy(itemOnFloor);
+        if (itemOnFloor.gameObject.tag == "Weapon") {
+            Weapon weapon = itemOnFloor.GetComponent<Weapon>();
+            reloadSpeed = weapon.reloadSpeed;
+            if (weapon.weaponName == "bow") {
+                hasBow = true;
+            } else if (weapon.weaponName == "crossbow") {
+                hasCrossbow = true;
+            }
+            Destroy(itemOnFloor.gameObject);
             itemOnFloor = null;
         }
     }
 
-    public void ShootProjectile(Vector3 targetPosition) {
-        Transform projectileTransform = Instantiate(projectile, transform.position, Quaternion.identity);
-        Vector3 shootDir = (targetPosition - transform.position).normalized;
-        projectileTransform.GetComponent<Projectile>().Setup(shootDir);
+    public void ShootProjectile(Vector2 targetPosition) {
+        if (Time.time >= timestampForNextAction) {
+            if (hasBow || hasCrossbow) {
+                Transform projectileTransform = Instantiate(projectile, transform.position, Quaternion.identity);
+                Vector3 shootDir = (targetPosition - (Vector2)transform.position).normalized;
+                projectileTransform.GetComponent<Projectile>().Setup(shootDir);
 
+                timestampForNextAction = Time.time + reloadSpeed;
+            } else {
+                Debug.Log("Trying to shoot without a bow");
+            }
+        } else {
+            Debug.Log("Trying to fire too fast");
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
 
-        if (collision.gameObject.tag == "Equipment") {
-            itemOnFloor = collision.gameObject;
-            Debug.Log("Inside OnTriggerEnter2D for player");
+        if (collision.gameObject.tag == "Weapon") {
+            itemOnFloor = collision.transform;
+            Debug.Log("Inside Weapon OnTriggerEnter2D for player");
         }        
     }
 
     private void OnTriggerExit2D(Collider2D collision) {
 
-        if (collision.gameObject.tag == "Equipment") {
+        if (collision.gameObject.tag == "Weapon") {
             itemOnFloor = null;
-            Debug.Log("Exiting Equipment trigger for player");
+            Debug.Log("Exiting Weapon trigger for player");
         }
     }
 
