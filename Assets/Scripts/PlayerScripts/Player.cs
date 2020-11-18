@@ -19,6 +19,10 @@ public class Player : MonoBehaviour {
     [SerializeField] private float reloadSpeed = 1f;
     private float timestampForNextAction;
 
+    [SerializeField] private List<GameObject> weaponsList;
+    [SerializeField] private List<bool> weaponsBoolList;
+    [SerializeField] private Weapon equippedWeapon = null;
+
     private GameObject itemOnFloor;
     [SerializeField] private Transform projectile;
     
@@ -27,6 +31,10 @@ public class Player : MonoBehaviour {
     {
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+
+        for (int i = 0; i < weaponsList.Count; i++) {
+            weaponsBoolList.Add(false);
+        }
     }
 
     // Update is called once per frame
@@ -62,29 +70,44 @@ public class Player : MonoBehaviour {
             return;
         }
         if (itemOnFloor.tag == "Weapon") {
-            Weapon weapon = itemOnFloor.GetComponent<Weapon>();
-            reloadSpeed = weapon.reloadSpeed;
-            if (weapon.weaponName == "bow") {
-                hasBow = true;
-            } else if (weapon.weaponName == "crossbow") {
-                hasCrossbow = true;
+            Weapon weaponOnFloor = itemOnFloor.GetComponent<Weapon>();
+
+            if (weaponsBoolList[weaponOnFloor.weaponIndex] == false) {
+                weaponsBoolList[weaponOnFloor.weaponIndex] = true;
+                SwitchWeapon(weaponOnFloor.weaponIndex);
+                Destroy(itemOnFloor);
+                itemOnFloor = null;
+            } else {
+                // Already had the weapon which we tried to pick up.
             }
-            Destroy(itemOnFloor);
-            itemOnFloor = null;
         }
     }
 
-    public void ShootProjectile(Vector2 targetPosition) {
-        if (Time.time >= timestampForNextAction) {
-            if (hasBow || hasCrossbow) {
-                Transform projectileTransform = Instantiate(projectile, transform.position, Quaternion.identity);
-                Vector3 shootDir = (targetPosition - (Vector2)transform.position).normalized;
-                projectileTransform.GetComponent<Projectile>().Setup(shootDir);
+    public void CycleEquippedWeapon(int cycleDirection) {
+        int newWeaponIndex = equippedWeapon.weaponIndex + cycleDirection;
 
-                timestampForNextAction = Time.time + reloadSpeed;
-            } else {
-                Debug.Log("Trying to shoot without a bow");
-            }
+        if (newWeaponIndex < 0) {
+            newWeaponIndex += weaponsList.Count - 1;
+        } else if (newWeaponIndex == weaponsList.Count) {
+            newWeaponIndex = 0;
+        }
+
+        if (weaponsBoolList[newWeaponIndex] == false) {
+            CycleEquippedWeapon(cycleDirection);
+        } else {
+            SwitchWeapon(newWeaponIndex);
+        }
+    }
+
+    private void SwitchWeapon(int weaponIndex) {
+        equippedWeapon = weaponsList[weaponIndex].GetComponent<Weapon>();
+    }
+
+    public void TryToAttack(Vector2 targetPosition) {
+        if (Time.time >= timestampForNextAction) {
+            this.equippedWeapon.MakeAttack(targetPosition, transform.position);
+            timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
+           
         } else {
             Debug.Log("Trying to fire too fast");
         }

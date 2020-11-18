@@ -172,7 +172,7 @@
   </objectgroup>
  </tile>
  <tile id="46" terrain="0,0,0,0" probability="0.01"/>
- <tile id="47" terrain="0,0,0,0" probability="0.01"/>
+ <tile id="47" type="Spawnpoint" terrain="0,0,0,0" probability="0.01"/>
  <wangsets>
   <wangset name="Desert" tile="5">
    <wangcornercolor name="Brick" color="#c17d11" tile="9" probability="1"/>

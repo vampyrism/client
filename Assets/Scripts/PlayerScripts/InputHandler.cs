@@ -18,11 +18,22 @@ public class InputHandler : MonoBehaviour {
         vertical = Input.GetAxisRaw("Vertical"); // -1 is down
         player.Move(horizontal, vertical);
 
-        if (Input.GetKeyDown(KeyCode.E)) {
+        if (Input.GetKeyDown(KeyCode.F)) {
             player.GrabObject();
         }
+
+        if (Input.GetKeyDown(KeyCode.E)) {
+            // Cycling weapon to the right
+            player.CycleEquippedWeapon(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            // Cycling weapon to the left
+            player.CycleEquippedWeapon(-1);
+        }
+
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
-            player.ShootProjectile((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            player.TryToAttack((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition));
         }
 
     }

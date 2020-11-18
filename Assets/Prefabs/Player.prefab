@@ -183,6 +183,12 @@ MonoBehaviour:
   vx: 0
   vy: 0
   hasBow: 0
-  timeBetweenShots: 0.5
+  hasCrossbow: 0
+  reloadSpeed: 1
+  weaponsList:
+  - {fileID: 4636058092664137700, guid: 07ac43a0e1560304db2584f1ba7225f7, type: 3}
+  - {fileID: 8949785768172525715, guid: 989675cfd5b125b4cae621ba06407bc5, type: 3}
+  weaponsBoolList: 
+  equipedWeapon: {fileID: 0}
   projectile: {fileID: 6764305579454125916, guid: 8941f1fd1714cc34d92ebdd7edb9b54f,
     type: 3}

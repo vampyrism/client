@@ -5,7 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float moveSpeed = 20;
-  public void Setup(Vector3 shootDirection) {
+    public void Setup(Vector3 shootDirection) {
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         rigidbody2D.AddForce(shootDirection * moveSpeed, ForceMode2D.Impulse);
         transform.eulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(shootDirection));

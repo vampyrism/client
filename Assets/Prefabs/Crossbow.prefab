@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 7120449459193450446}
   - component: {fileID: 5731115002285881022}
   m_Layer: 0
-  m_Name: Crossbow 1
+  m_Name: Crossbow
   m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,7 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca03518310464943a05a9ce17fb4d4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponName: crossbow
+  weaponIndex: 1
   weaponDamage: 15
   reloadSpeed: 0.5
   isRanged: 1
-  weaponName: crossbow
+  projectile: {fileID: 6764305579454125916, guid: 8941f1fd1714cc34d92ebdd7edb9b54f,
+    type: 3}
