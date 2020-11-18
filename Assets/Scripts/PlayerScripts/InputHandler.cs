@@ -22,8 +22,7 @@ public class InputHandler : MonoBehaviour {
             player.GrabObject();
         }
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
-            player.ShootProjectile(Input.mousePosition);
-
+            player.ShootProjectile((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition));
         }
 
     }

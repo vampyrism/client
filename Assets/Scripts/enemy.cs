@@ -61,6 +61,10 @@ public class Enemy : MonoBehaviour
         return transform.position;
     }
 
+    public void Damage() {
+        Debug.Log("Ouch, that hurt //Enemy");
+    }
+
     public void SetTargetPosition(Vector3 targetPosition) {
         currentPathIndex = 0;
         pathVectorList = Pathfinding.Instance.FindPath(GetPosition(), targetPosition);
