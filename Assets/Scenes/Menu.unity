@@ -217,5 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5efc98a018b497409dc4eb9de0ca1b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventSystem: {fileID: 3938839738033344264, guid: 3160e9c6943b54f99935265e1ed367eb,
+    type: 3}
   menuCanvas: {fileID: 3879920633920940830, guid: 87166c22e7d884aba99f94251b25d629,
     type: 3}

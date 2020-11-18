@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Character
 {
     Rigidbody2D body;
 
-    //float moveLimiter = 0.7f;
+    [SerializeField] private float runSpeed = 8f;
+    [SerializeField] private float MinDistance = 2f;
 
-    public float runSpeed = 0.5f;
-    public float MinDistance = 0.5f;
-
-    public int currentPathIndex;
-    public List<Vector3> pathVectorList;
+    [SerializeField] private int currentPathIndex;
+    private List<Vector3> pathVectorList;
 
     private Transform target;
     private Animator animator;
@@ -32,7 +30,6 @@ public class Enemy : MonoBehaviour
         HandleMovement();
     }
 
-
     public void HandleMovement() { 
 
         if (pathVectorList != null) {
@@ -40,7 +37,7 @@ public class Enemy : MonoBehaviour
             //transform.right = targetPosition - transform.position;
             Debug.DrawLine(transform.position, currentPathPosition, Color.green);
 
-            if (Vector3.Distance(transform.position, currentPathPosition) > 2f) {
+            if (Vector3.Distance(transform.position, currentPathPosition) > MinDistance) {
                 Vector3 moveDir = (currentPathPosition - transform.position).normalized;
                 body.velocity = new Vector2(moveDir.x * runSpeed, moveDir.y * runSpeed);
 
@@ -61,8 +58,8 @@ public class Enemy : MonoBehaviour
         return transform.position;
     }
 
-    public void Damage() {
-        Debug.Log("Ouch, that hurt //Enemy");
+    public override void TakeDamage(int damage) {
+        Debug.Log("Enemy took " + damage + " damage!");
     }
 
     public void SetTargetPosition(Vector3 targetPosition) {

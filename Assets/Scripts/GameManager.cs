@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour
     public int gridWidth = 25;
     public int cellSize = 2;
 
-    public GameObject enemyPrefab;
-    public GameObject playerPrefab;
-    public GameObject bow;
-    public GameObject crossbow;
+    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject otherPlayerPrefab;
+    [SerializeField] private GameObject bow;
+    [SerializeField] private GameObject crossbow;
 
     public bool isDay = true;
     public bool isNight = false;
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour
 
         Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
+        Instantiate(otherPlayerPrefab, new Vector3(47f, 47f), Quaternion.identity);
         Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
         Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);
     }

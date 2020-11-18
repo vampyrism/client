@@ -7,7 +7,7 @@ public class Crossbow : Weapon
     [SerializeField] private Transform projectile;
     public Crossbow() {
         this.weaponName = "crossbow";
-        this.weaponIndex = 1;
+        this.weaponIndex = 2;
         this.weaponDamage = 15f;
         this.reloadSpeed = 0.5f;
         this.isRanged = true;

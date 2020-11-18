@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class Weapon : MonoBehaviour
 {
-    // Implement the starter weapon!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public string weaponName;
     public int weaponIndex;
     public float weaponDamage;

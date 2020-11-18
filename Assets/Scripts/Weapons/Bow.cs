@@ -8,7 +8,7 @@ public class Bow : Weapon
     [SerializeField] private Transform projectile;
     public Bow() {
         this.weaponName = "bow";
-        this.weaponIndex = 0;
+        this.weaponIndex = 1;
         this.weaponDamage = 11f;
         this.reloadSpeed = 0.3f;
         this.isRanged = true;

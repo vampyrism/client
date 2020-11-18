@@ -52,6 +52,8 @@ MonoBehaviour:
     type: 3}
   playerPrefab: {fileID: 7567568766520248273, guid: 35b0c9eac03967641b131a4479d591f9,
     type: 3}
+  otherPlayerPrefab: {fileID: 4391658781288943646, guid: 7f20e5bcde76243288396bec1986f918,
+    type: 3}
   bow: {fileID: 4636058092664137700, guid: 07ac43a0e1560304db2584f1ba7225f7, type: 3}
   crossbow: {fileID: 8949785768172525715, guid: 989675cfd5b125b4cae621ba06407bc5,
     type: 3}

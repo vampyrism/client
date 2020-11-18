@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : Character {
+    // Variables regarding physics
     Rigidbody2D body;
     SpriteRenderer sprite;
 
+    // Variables regarding movement
     private float moveLimiter = 0.7f;
     [SerializeField] private float runSpeed = 1.0f;
 
-    public float x = 0.0f;
-    public float y = 0.0f;
-    public float vx = 0.0f;
-    public float vy = 0.0f;
+    private float x = 0.0f;
+    private float y = 0.0f;
+    private float vx = 0.0f;
+    private float vy = 0.0f;
 
-    [SerializeField] private bool hasBow = false;
-    [SerializeField] private bool hasCrossbow = false;
-    [SerializeField] private float reloadSpeed = 1f;
+    // Variables regarding weapons and items
+    [SerializeField] private List<GameObject> weaponsList;
+    private List<bool> weaponsBoolList;
+    private Weapon equippedWeapon = null;
+
     private float timestampForNextAction;
 
-    [SerializeField] private List<GameObject> weaponsList;
-    [SerializeField] private List<bool> weaponsBoolList;
-    [SerializeField] private Weapon equippedWeapon = null;
-
     private GameObject itemOnFloor;
-    [SerializeField] private Transform projectile;
     
     // Start is called before the first frame update
     void Start()
@@ -32,9 +31,16 @@ public class Player : MonoBehaviour {
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
 
-        for (int i = 0; i < weaponsList.Count; i++) {
+        weaponsBoolList = new List<bool>();
+        // Setting true for "startingWeapon" position
+        weaponsBoolList.Add(true);
+        // Setting false for all other weapon positions
+        for (int i = 1; i < weaponsList.Count; i++) {
             weaponsBoolList.Add(false);
         }
+
+        //Setting "StartingWeapon" as first weapon
+        SwitchWeapon(0);
     }
 
     // Update is called once per frame
@@ -87,13 +93,17 @@ public class Player : MonoBehaviour {
         int newWeaponIndex = equippedWeapon.weaponIndex + cycleDirection;
 
         if (newWeaponIndex < 0) {
-            newWeaponIndex += weaponsList.Count - 1;
+            newWeaponIndex += weaponsList.Count;
         } else if (newWeaponIndex == weaponsList.Count) {
             newWeaponIndex = 0;
         }
 
         if (weaponsBoolList[newWeaponIndex] == false) {
-            CycleEquippedWeapon(cycleDirection);
+            if (cycleDirection < 0) {
+                CycleEquippedWeapon(cycleDirection - 1);
+            } else {
+                CycleEquippedWeapon(cycleDirection + 1);
+            }
         } else {
             SwitchWeapon(newWeaponIndex);
         }
@@ -111,6 +121,10 @@ public class Player : MonoBehaviour {
         } else {
             Debug.Log("Trying to fire too fast");
         }
+    }
+
+    public override void TakeDamage(int damage) {
+        Debug.Log("Player took " + damage + " damage!");
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
