@@ -19,7 +19,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float reloadSpeed = 1f;
     private float timestampForNextAction;
 
-    private Transform itemOnFloor;
+    private GameObject itemOnFloor;
     [SerializeField] private Transform projectile;
     
     // Start is called before the first frame update
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour {
             Debug.Log("Trying to grab an item when noone exist");
             return;
         }
-        if (itemOnFloor.gameObject.tag == "Weapon") {
+        if (itemOnFloor.tag == "Weapon") {
             Weapon weapon = itemOnFloor.GetComponent<Weapon>();
             reloadSpeed = weapon.reloadSpeed;
             if (weapon.weaponName == "bow") {
@@ -69,7 +69,7 @@ public class Player : MonoBehaviour {
             } else if (weapon.weaponName == "crossbow") {
                 hasCrossbow = true;
             }
-            Destroy(itemOnFloor.gameObject);
+            Destroy(itemOnFloor);
             itemOnFloor = null;
         }
     }
@@ -93,7 +93,7 @@ public class Player : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
 
         if (collision.gameObject.tag == "Weapon") {
-            itemOnFloor = collision.transform;
+            itemOnFloor = collision.gameObject;
             Debug.Log("Inside Weapon OnTriggerEnter2D for player");
         }        
     }
