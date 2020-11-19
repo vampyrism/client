@@ -11,7 +11,7 @@ public class MenuLoader : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        Instantiate(eventSystem);
+        DontDestroyOnLoad(Instantiate(eventSystem));
         Instantiate(menuCanvas);
     }
 }

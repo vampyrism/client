@@ -6,6 +6,7 @@ public class Player : Character {
     // Variables regarding physics
     Rigidbody2D body;
     SpriteRenderer sprite;
+    private Animator animator;
 
     // Variables regarding movement
     private float moveLimiter = 0.7f;
@@ -30,6 +31,7 @@ public class Player : Character {
     {
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
 
         weaponsBoolList = new List<bool>();
         // Setting true for "startingWeapon" position
@@ -115,6 +117,7 @@ public class Player : Character {
 
     public void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
+            animator.SetTrigger("Attack");
             this.equippedWeapon.MakeAttack(targetPosition, transform.position);
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
            
@@ -123,8 +126,15 @@ public class Player : Character {
         }
     }
 
-    public override void TakeDamage(int damage) {
+    public override void TakeDamage(float damage) {
         Debug.Log("Player took " + damage + " damage!");
+        animator.SetTrigger("Hit");
+        health = health - damage;
+        if (health <= 0) {
+            GameManager.instance.HandleKilledPlayer(transform);
+            GameManager.instance.GameOver();
+            Destroy(gameObject);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
@@ -142,5 +152,4 @@ public class Player : Character {
             Debug.Log("Exiting Weapon trigger for player");
         }
     }
-
 }

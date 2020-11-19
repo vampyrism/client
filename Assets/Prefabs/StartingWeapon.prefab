@@ -48,3 +48,7 @@ MonoBehaviour:
   weaponDamage: 1
   reloadSpeed: 1
   isRanged: 0
+  attackRangeX: 0.8
+  attackRangeY: 1.5
+  weaponDistanceFromPlayer: 1
+  offsetInYDirection: 0.6

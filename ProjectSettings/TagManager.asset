@@ -8,6 +8,8 @@ TagManager:
   - Equipment
   - Bow
   - Weapon
+  - OtherPlayer
+  - Enemy
   layers:
   - Default
   - TransparentFX

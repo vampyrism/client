@@ -10,5 +10,5 @@ public abstract class Weapon : MonoBehaviour
     public float reloadSpeed;
     public bool isRanged;
 
-    public abstract void MakeAttack(Vector2 targetPosition, Vector2 myPosition);
+    public abstract void MakeAttack(Vector2 clickPosition, Vector2 myPosition);
 }

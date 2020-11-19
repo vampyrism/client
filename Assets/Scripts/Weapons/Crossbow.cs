@@ -13,8 +13,8 @@ public class Crossbow : Weapon
         this.isRanged = true;
     }
 
-    public override void MakeAttack(Vector2 targetPosition, Vector2 spawnPosition) {
-        Vector2 attackDirection = (targetPosition - (Vector2)spawnPosition).normalized;
+    public override void MakeAttack(Vector2 clickPosition, Vector2 spawnPosition) {
+        Vector2 attackDirection = (clickPosition - (Vector2)spawnPosition).normalized;
         Transform projectileTransform = Instantiate(projectile, spawnPosition, Quaternion.identity);
         projectileTransform.GetComponent<Projectile>().Setup(attackDirection);
     }

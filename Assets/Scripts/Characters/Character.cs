@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    public abstract void TakeDamage(int damage);
+    [SerializeField] public float health = 5;
+    public abstract void TakeDamage(float damage);
 
 }

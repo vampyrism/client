@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -28,6 +29,8 @@ public class GameManager : MonoBehaviour
 
     private float timeLeft;
 
+    private GameObject[] enemyList;
+
 
     void Awake()
     {
@@ -37,10 +40,12 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        DontDestroyOnLoad(gameObject);
         
         InitGame();
+    }
+
+    private void Start() {
+        enemyList = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
     void InitGame()
@@ -53,6 +58,7 @@ public class GameManager : MonoBehaviour
         Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
         Instantiate(otherPlayerPrefab, new Vector3(47f, 47f), Quaternion.identity);
+        Instantiate(otherPlayerPrefab, new Vector3(4f, 4f), Quaternion.identity);
         Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
         Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);
     }
@@ -82,6 +88,16 @@ public class GameManager : MonoBehaviour
                 cone.hideCone();
             }
         }
+    }
+
+    public void HandleKilledPlayer(Transform killedPlayer) {
+        foreach (GameObject enemyGameObject in enemyList) {
+            enemyGameObject.GetComponent<Enemy>().RemovePlayerFromTargets(killedPlayer);
+            }
+    }
+
+    public void GameOver() {
+        SceneManager.LoadScene("GameOver");
     }
     
 }
