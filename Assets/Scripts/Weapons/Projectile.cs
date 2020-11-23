@@ -5,7 +5,9 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float moveSpeed = 20;
-    public void Setup(Vector3 shootDirection) {
+    private float projectileDamage;
+    public void Setup(Vector3 shootDirection, float weapondamage ) {
+        projectileDamage = weapondamage;
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         rigidbody2D.AddForce(shootDirection * moveSpeed, ForceMode2D.Impulse);
         transform.eulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(shootDirection));
@@ -27,7 +29,7 @@ public class Projectile : MonoBehaviour
                 return;
             }
             // Hit an Character
-            hitCharacter.TakeDamage(0);
+            hitCharacter.TakeDamage(projectileDamage);
             Destroy(gameObject);
         } else if (collider.name == "Collision_Default"){
             // Hit a wall

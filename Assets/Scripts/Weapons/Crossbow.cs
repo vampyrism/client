@@ -16,6 +16,6 @@ public class Crossbow : Weapon
     public override void MakeAttack(Vector2 clickPosition, Vector2 spawnPosition) {
         Vector2 attackDirection = (clickPosition - (Vector2)spawnPosition).normalized;
         Transform projectileTransform = Instantiate(projectile, spawnPosition, Quaternion.identity);
-        projectileTransform.GetComponent<Projectile>().Setup(attackDirection);
+        projectileTransform.GetComponent<Projectile>().Setup(attackDirection, weaponDamage);
     }
 }
