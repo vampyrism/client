@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject otherPlayerPrefab;
     [SerializeField] private GameObject bow;
     [SerializeField] private GameObject crossbow;
+    [SerializeField] private GameObject gameCanvas;
 
     public bool isDay = true;
     public bool isNight = false;
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
         cone = Instantiate(cone);
         pathfinding = new Pathfinding(gridHeight, gridWidth);
 
+        Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
         Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
         Instantiate(otherPlayerPrefab, new Vector3(47f, 47f), Quaternion.identity);

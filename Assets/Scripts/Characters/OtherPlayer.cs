@@ -8,8 +8,8 @@ public class OtherPlayer : Character
     public override void TakeDamage(float damage) {
 
         Debug.Log("OtherPlayer took " + damage + " damage!");
-        health = health - damage;
-        if (health <= 0) {
+        currentHealth = currentHealth - damage;
+        if (currentHealth <= 0) {
             GameManager.instance.HandleKilledPlayer(transform);
             Destroy(gameObject);
         }

@@ -25,7 +25,11 @@ public class Player : Character {
     private float timestampForNextAction;
 
     private GameObject itemOnFloor;
-    
+
+    // UI elements
+    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private AvailableWeapons availableWeapons;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +44,12 @@ public class Player : Character {
         for (int i = 1; i < weaponsList.Count; i++) {
             weaponsBoolList.Add(false);
         }
+
+        currentHealth = maxHealth;
+
+        healthBar = GameObject.Find("HealthBar").GetComponent<HealthBar>();
+        availableWeapons = GameObject.Find("AvailableWeapons").GetComponent<AvailableWeapons>();
+        healthBar.SetMaxHealth(maxHealth);
 
         //Setting "StartingWeapon" as first weapon
         SwitchWeapon(0);
@@ -83,6 +93,7 @@ public class Player : Character {
             if (weaponsBoolList[weaponOnFloor.weaponIndex] == false) {
                 weaponsBoolList[weaponOnFloor.weaponIndex] = true;
                 SwitchWeapon(weaponOnFloor.weaponIndex);
+                availableWeapons.SetActive(weaponOnFloor.weaponIndex);
                 Destroy(itemOnFloor);
                 itemOnFloor = null;
             } else {
@@ -113,6 +124,7 @@ public class Player : Character {
 
     private void SwitchWeapon(int weaponIndex) {
         equippedWeapon = weaponsList[weaponIndex].GetComponent<Weapon>();
+        availableWeapons.ChooseWeapon(weaponIndex);
     }
 
     public void TryToAttack(Vector2 targetPosition) {
@@ -129,8 +141,9 @@ public class Player : Character {
     public override void TakeDamage(float damage) {
         Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
-        health = health - damage;
-        if (health <= 0) {
+        currentHealth = currentHealth - damage;
+        healthBar.SetHealth(currentHealth);
+        if (currentHealth <= 0) {
             GameManager.instance.HandleKilledPlayer(transform);
             GameManager.instance.GameOver();
             Destroy(gameObject);

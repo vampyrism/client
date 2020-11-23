@@ -164,10 +164,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32c3d2db345d8314d9bf2925bac79855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 20
+  maxHealth: 5
+  currentHealth: 5
   runSpeed: 10
   MinDistance: 2
   enemyReach: 2.5
-  enemyDamage: 2
+  enemyDamage: 3
   enemyAttackSpeed: 0.5
   currentPathIndex: 0

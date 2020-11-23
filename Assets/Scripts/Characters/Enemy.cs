@@ -88,8 +88,8 @@ public class Enemy : Character
     public override void TakeDamage(float damage) {
         Debug.Log("Enemy took " + damage + " damage!");
         animator.SetTrigger("enemyHit");
-        health = health - damage;
-        if (health <= 0) {
+        currentHealth = currentHealth - damage;
+        if (currentHealth <= 0) {
             Destroy(gameObject);
         }
     }

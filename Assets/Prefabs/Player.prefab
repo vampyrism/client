@@ -177,8 +177,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab5e4867496c4421a80ad15a470bb57c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 20
+  currentHealth: 20
   runSpeed: 15
   weaponsList:
   - {fileID: 673673003763792086, guid: b57a3679d4c8be54a86c71d5c6df0226, type: 3}
   - {fileID: 4636058092664137700, guid: 07ac43a0e1560304db2584f1ba7225f7, type: 3}
   - {fileID: 8949785768172525715, guid: 989675cfd5b125b4cae621ba06407bc5, type: 3}
+  healthBar: {fileID: 1691990995930018426, guid: b7ab0abd163e2164fa6b6b461940c8d6,
+    type: 3}
