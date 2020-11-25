@@ -63,6 +63,9 @@ public class GameManager : MonoBehaviour
         Instantiate(otherPlayerPrefab, new Vector3(4f, 4f), Quaternion.identity);
         Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
         Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);
+
+        NetworkClient c = NetworkClient.GetInstance();
+        c.Init();
     }
     
     void Update()
