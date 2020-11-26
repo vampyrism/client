@@ -52,9 +52,9 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         timeLeft = 5.0f;
-        Instantiate(tileMap, new Vector3(0f, 50f), Quaternion.identity);
+        Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
         cone = Instantiate(cone);
-        pathfinding = new Pathfinding(gridHeight, gridWidth);
+        pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
         Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);

@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: crossbow
   weaponIndex: 2
-  weaponDamage: 15
+  weaponDamage: 3
   reloadSpeed: 0.5
   isRanged: 1
   projectile: {fileID: 6764305579454125916, guid: 8941f1fd1714cc34d92ebdd7edb9b54f,
