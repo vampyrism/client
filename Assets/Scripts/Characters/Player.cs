@@ -12,10 +12,10 @@ public class Player : Character {
     private float moveLimiter = 0.7f;
     [SerializeField] private float runSpeed = 1.0f;
 
-    private float x = 0.0f;
-    private float y = 0.0f;
-    private float vx = 0.0f;
-    private float vy = 0.0f;
+    public float x { get; private set; } = 0.0f;
+    public float y { get; private set; } = 0.0f;
+    public float vx { get; private set; } = 0.0f;
+    public float vy { get; private set; } = 0.0f;
 
     // Variables regarding weapons and items
     [SerializeField] private List<GameObject> weaponsList;

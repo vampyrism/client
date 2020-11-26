@@ -29,6 +29,23 @@ public class NetworkClient
         udpInstance.Connect(0);
     }
 
+    public void FixedUpdate()
+    {
+        Debug.Log("Sending packet");
+        Player p = GameObject.Find("Player(Clone)").GetComponent<Player>();
+        float x = p.x;
+        float y = p.y;
+        float xp = p.vx;
+        float yp = p.vy;
+        float rot = 0f;
+
+        MovementMessage mm = new MovementMessage(0, 0, 0, 0, x, y, rot, xp, yp);
+        UDPPacket packet = new UDPPacket();
+        packet.AddMessage(mm);
+
+        this.udpInstance.SendPacket(packet);
+    }
+
     public class UDP
     {
         public UdpClient socket;
@@ -85,7 +102,11 @@ public class NetworkClient
 
             while (this.connected == false)
             {
-                if(retries >= 3) { break; }
+                if(retries >= 3) 
+                {
+                    Debug.LogWarning("Failed to connect");
+                    break; 
+                }
 
                 Debug.Log("Trying to connect...");
                 this.socket.Send(d, d.Length);
@@ -93,8 +114,6 @@ public class NetworkClient
 
                 Thread.Sleep(1000);
             }
-
-            Debug.LogWarning("Failed to connect");
         }
 
         public void CallbackUponReceive(IAsyncResult result)
@@ -127,7 +146,8 @@ public class NetworkClient
 
         public void SendPacket(UDPPacket packet)
         {
-
+            byte[] p = packet.Serialize();
+            this.socket.Send(p, p.Length);
         }
     }
 }
