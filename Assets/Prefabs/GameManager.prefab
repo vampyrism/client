@@ -50,7 +50,7 @@ MonoBehaviour:
   cellSize: 1
   enemyPrefab: {fileID: 546481475594392271, guid: 81022744329490e4db7ce342cd30a1db,
     type: 3}
-  playerPrefab: {fileID: 7567568766520248273, guid: 35b0c9eac03967641b131a4479d591f9,
+  playerPrefab: {fileID: 1247007751301131931, guid: 65c4f5c6c92e8944e9b494f8bf8d7ffc,
     type: 3}
   otherPlayerPrefab: {fileID: 4391658781288943646, guid: 7f20e5bcde76243288396bec1986f918,
     type: 3}

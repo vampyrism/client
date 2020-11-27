@@ -26,8 +26,12 @@ public class Enemy : Character
     private Transform currentTarget;
     private Animator animator;
 
+    // UI elements
+    [SerializeField] private HealthBar enemyHealthBar;
+
     void Start()
     {
+        enemyHealthBar.SetMaxHealth(maxHealth);
         body = GetComponent<Rigidbody2D>();
         animator  = GetComponent<Animator>();
 
@@ -114,6 +118,7 @@ public class Enemy : Character
         Debug.Log("Enemy took " + damage + " damage!");
         animator.SetTrigger("enemyHit");
         currentHealth = currentHealth - damage;
+        enemyHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
             Destroy(gameObject);
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : Character {
     // Variables regarding physics
@@ -11,6 +12,7 @@ public class Player : Character {
     // Variables regarding movement
     private float moveLimiter = 0.7f;
     [SerializeField] private float runSpeed = 1.0f;
+    [SerializeField] private string playerName;
 
     private float x = 0.0f;
     private float y = 0.0f;
@@ -27,12 +29,15 @@ public class Player : Character {
     private GameObject itemOnFloor;
 
     // UI elements
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private HealthBar overworldHealthBar;
     [SerializeField] private AvailableWeapons availableWeapons;
+    [SerializeField] private Text nameTextBox;
+    [SerializeField] private HealthBar playerHealthBar;
 
     // Start is called before the first frame update
     void Start()
     {
+        nameTextBox.text = playerName;
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
@@ -47,9 +52,10 @@ public class Player : Character {
 
         currentHealth = maxHealth;
 
-        healthBar = GameObject.Find("HealthBar").GetComponent<HealthBar>();
+        overworldHealthBar = GameObject.Find("OverworldHealthBar").GetComponent<HealthBar>();
         availableWeapons = GameObject.Find("AvailableWeapons").GetComponent<AvailableWeapons>();
-        healthBar.SetMaxHealth(maxHealth);
+        overworldHealthBar.SetMaxHealth(maxHealth);
+        playerHealthBar.SetMaxHealth(maxHealth);
 
         //Setting "StartingWeapon" as first weapon
         SwitchWeapon(0);
@@ -142,7 +148,8 @@ public class Player : Character {
         Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
-        healthBar.SetHealth(currentHealth);
+        overworldHealthBar.SetHealth(currentHealth);
+        playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
             GameManager.instance.HandleKilledPlayer(transform);
             GameManager.instance.GameOver();

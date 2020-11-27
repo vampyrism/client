@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         timeLeft = 5.0f;
-        Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
+        Transform tilemap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
         cone = Instantiate(cone);
         pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
