@@ -11,6 +11,7 @@ using Assets.Server;
 using System.Threading.Tasks;
 using System.Text;
 using System.Linq;
+using System.Collections.Concurrent;
 
 public class NetworkClient
 {
@@ -20,6 +21,8 @@ public class NetworkClient
     public string ip = "127.0.0.1";
     public int port = 9000;
     public UDP udpInstance;
+
+    public ConcurrentQueue<Message> MessageQueue { get; private set; } = new ConcurrentQueue<Message>();
 
     public static NetworkClient GetInstance() { return instance; }
 
@@ -31,7 +34,7 @@ public class NetworkClient
 
     public void FixedUpdate()
     {
-        Debug.Log("Sending packet");
+        /*Debug.Log("Sending packet");
         Player p = GameObject.Find("Player(Clone)").GetComponent<Player>();
         float x = p.x;
         float y = p.y;
@@ -43,7 +46,33 @@ public class NetworkClient
         UDPPacket packet = new UDPPacket();
         packet.AddMessage(mm);
 
-        this.udpInstance.SendPacket(packet);
+        this.udpInstance.SendPacket(packet);*/
+
+        UDPPacket p = BuildPacket();
+        this.udpInstance.SendPacket(p);
+
+    }
+
+    private UDPPacket BuildPacket()
+    {
+        UDPPacket p = new UDPPacket();
+        int space = p.SizeLeft();
+
+        while (this.MessageQueue.Count > 0)
+        {
+            this.MessageQueue.TryPeek(out Message n);
+            if (n.Size() < space)
+            {
+                this.MessageQueue.TryDequeue(out Message m);
+                p.AddMessage(m);
+            } 
+            else
+            {
+                break;
+            }
+        }
+
+        return p;
     }
 
     public class UDP
@@ -64,15 +93,23 @@ public class NetworkClient
 
             Task.Run(() =>
             {
-                if(this.connected == false)
+                try
                 {
-                    this.Handshake();
-                }
+                    if (this.connected == false)
+                    {
+                        this.Handshake();
+                    }
 
-                byte[] data = new byte[1024];
-                data = this.socket.Receive(ref this.endPoint);
-                Debug.Log(data);
-                HandleRawPacket(data);
+                    byte[] data = new byte[1024];
+                    Debug.Log("feed me data");
+                    data = this.socket.Receive(ref this.endPoint);
+                    Debug.Log("*nom* " + data);
+                    HandleRawPacket(data);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError(e);
+                }
             });
         }
 
@@ -114,21 +151,6 @@ public class NetworkClient
 
                 Thread.Sleep(1000);
             }
-        }
-
-        public void CallbackUponReceive(IAsyncResult result)
-        {
-            byte[] dataReceived = socket.EndReceive(result, ref endPoint);
-            socket.BeginReceive(CallbackUponReceive, null);
-            //Size of full package?
-            if(dataReceived.Length < 8){
-                return;
-            }
-
-            //Handle data
-            //HandleData(dataReceived);
-            Console.WriteLine("Connection Accepted");
-
         }
 
         public void HandleRawPacket(byte[] data)

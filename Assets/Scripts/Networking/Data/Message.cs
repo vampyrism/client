@@ -1,11 +1,10 @@
-
 using System;
 using System.Collections.Generic;
 
 // This is an abstract class for implementing different kinds of messages.
 // Can also deserialize a message and its' type from bytes. 
 
-namespace Assets.Server 
+namespace Assets.Server
 {
     public abstract class Message
     {
@@ -13,20 +12,22 @@ namespace Assets.Server
         protected static readonly byte MOVEMENT = 0;
         protected static readonly byte PICKUP = 1;
         protected static readonly byte ATTACK = 2;
+        protected static readonly byte ENTITY_UPDATE = 3;
 
         // Factory dictionary for message types
-        private static readonly Dictionary<byte, Func<byte[], int, Message>> typeConstructors = 
+        private static readonly Dictionary<byte, Func<byte[], int, Message>> typeConstructors =
         new Dictionary<byte, Func<byte[], int, Message>>()
         {
-            { MOVEMENT, (byte[] bytes, int cursor) => new MovementMessage(bytes, cursor) },
-            { ATTACK,   (byte[] bytes, int cursor) => new AttackMessage(bytes, cursor) }
+            { MOVEMENT,         (byte[] bytes, int cursor) => new MovementMessage(bytes, cursor) },
+            { ATTACK,           (byte[] bytes, int cursor) => new AttackMessage(bytes, cursor) },
+            { ENTITY_UPDATE,    (byte[] bytes, int cursor) => new EntityUpdateMessage(bytes, cursor) }
         };
 
         // Parse bytes and return appropriate Message type
-        public static Message Deserialize(byte[] bytes, int cursor) 
+        public static Message Deserialize(byte[] bytes, int cursor)
         {
             byte type = bytes[cursor];
-            return (Message) typeConstructors[type].DynamicInvoke(bytes, cursor);
+            return (Message)typeConstructors[type].DynamicInvoke(bytes, cursor);
         }
 
         // Abstract

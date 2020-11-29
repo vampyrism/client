@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using Assets.Server;
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -31,6 +34,9 @@ public class GameManager : MonoBehaviour
     private float timeLeft;
 
     private GameObject[] enemyList;
+
+    public ConcurrentQueue<Action> TaskQueue { get; private set; } = new ConcurrentQueue<Action>();
+    public ConcurrentDictionary<UInt32, Entity> Entities { get; private set; } = new ConcurrentDictionary<UInt32, Entity>();
 
 
     void Awake()
@@ -97,6 +103,16 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        while (this.TaskQueue.Count > 0)
+        {
+            bool s = this.TaskQueue.TryDequeue(out Action a);
+
+            if (s)
+            {
+                a.Invoke();
+            }
+        }
+
         NetworkClient.GetInstance().FixedUpdate();
     }
 
@@ -110,4 +126,20 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("GameOver");
     }
     
+    public void UpdateEntityPosition(Entity e)
+    {
+        MovementMessage m = new MovementMessage(
+            0,
+            e.ID,
+            0,
+            0,
+            e.X,
+            e.Y,
+            e.Rotation,
+            e.DX,
+            e.DY
+            );
+
+        NetworkClient.GetInstance().MessageQueue.Enqueue(m);
+    }
 }

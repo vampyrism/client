@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : Character {
+    // Networking
+    public bool IsCurrentPlayer { get; set; } = false;
+
     // Variables regarding physics
     Rigidbody2D body;
     SpriteRenderer sprite;
@@ -12,10 +15,10 @@ public class Player : Character {
     private float moveLimiter = 0.7f;
     [SerializeField] private float runSpeed = 1.0f;
 
-    public float x { get; private set; } = 0.0f;
+    /*public float x { get; private set; } = 0.0f;
     public float y { get; private set; } = 0.0f;
     public float vx { get; private set; } = 0.0f;
-    public float vy { get; private set; } = 0.0f;
+    public float vy { get; private set; } = 0.0f;*/
 
     // Variables regarding weapons and items
     [SerializeField] private List<GameObject> weaponsList;
@@ -58,10 +61,7 @@ public class Player : Character {
     // Update is called once per frame
     void Update()
     {
-        x = body.position.x;
-        y = body.position.y;
-        vx = body.velocity.x;
-        vy = body.velocity.y;
+
     }
 
     public void Move(float horizontal, float vertical) {
@@ -163,6 +163,21 @@ public class Player : Character {
         if (collision.gameObject.tag == "Weapon") {
             itemOnFloor = null;
             Debug.Log("Exiting Weapon trigger for player");
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if(transform.hasChanged)
+        {
+            transform.hasChanged = false;
+
+            base.X = body.position.x;
+            base.Y = body.position.y;
+            base.DX = body.velocity.x;
+            base.DY = body.velocity.y;
+
+            GameManager.instance.UpdateEntityPosition(this);
         }
     }
 }

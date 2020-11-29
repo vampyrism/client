@@ -9,12 +9,20 @@ public class Follow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        target = GameObject.FindGameObjectWithTag ("Player").transform;
+        //target = GameObject.FindGameObjectWithTag ("Player").transform;
+    }
+
+    public void SetTarget(GameObject target)
+    {
+        this.target = target.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
+        if (this.target)
+        {
+            transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
+        }
     }
 }
