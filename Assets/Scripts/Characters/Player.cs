@@ -79,7 +79,7 @@ public class Player : Character {
             sprite.flipX = false;
         }
 
-        body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+        body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
     }
 
     public void GrabObject() {
