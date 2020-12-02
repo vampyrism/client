@@ -35,7 +35,7 @@ public class Enemy : Character
         body = GetComponent<Rigidbody2D>();
         animator  = GetComponent<Animator>();
 
-        GameObject[] OtherPlayerGameObjectList = GameObject.FindGameObjectsWithTag("OtherPlayer");
+        /*GameObject[] OtherPlayerGameObjectList = GameObject.FindGameObjectsWithTag("OtherPlayer");
         targetList = new List<Transform>();
         foreach (GameObject OtherPlayerGameObject in OtherPlayerGameObjectList) {
             targetList.Add(OtherPlayerGameObject.transform);
@@ -49,13 +49,13 @@ public class Enemy : Character
         timestampForNextAttack = Time.time;
 
         // Set the initial path
-        UpdatePath();
+        UpdatePath();*/
     }
 
     void Update()
     {
 
-        if (pathVectorList != null && currentTarget != null) {
+        /*if (pathVectorList != null && currentTarget != null) {
             Vector3 currentPathPosition = pathVectorList[currentPathIndex];
             // If close to target, try to attack
             if (Vector3.Distance(transform.position, currentTarget.position) < enemyReach) {
@@ -71,7 +71,7 @@ public class Enemy : Character
             }
         } else {
             UpdatePath();
-        }
+        }*/
     }
 
     public void HandleMovement() {
@@ -173,5 +173,11 @@ public class Enemy : Character
     private void OnCollisionEnter2D(Collision2D collision) {
        
         //pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
+    }
+
+    public override void DirectMove(float x, float y, float dx, float dy)
+    {
+        this.transform.position = new Vector3(x, y);
+        //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
 }

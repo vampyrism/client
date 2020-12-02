@@ -16,33 +16,34 @@ namespace Assets.Server
 
             GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                 GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity e);
-                Player p = (Player)e.gameObject.GetComponent<Player>();
+                //Player p = (Player)e.gameObject.GetComponent<Player>();
                 
-                if(GameManager.instance.currentPlayer != null && GameManager.instance.currentPlayer.ID == m.GetEntityId())
+                /*if(GameManager.instance.currentPlayer != null && GameManager.instance.currentPlayer.ID == m.GetEntityId())
                 {
                     return;
-                }
+                }*/
 
-                if (Vector2.Distance(p.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
+                if (Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
                 {
-                    p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                    Debug.Log("Distance is " + Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())));
+                    e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
 
-                    if (m.GetSequenceNumber() > p.LastUpdate)
+                    if (m.GetSequenceNumber() > e.LastUpdate)
                     {
-                        p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                        e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
                     }
-                    else if (Math.Abs(m.GetSequenceNumber() - p.LastUpdate) > UInt16.MaxValue / 4)
+                    else if (Math.Abs(m.GetSequenceNumber() - e.LastUpdate) > UInt16.MaxValue / 4)
                     {
-                        p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                        e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
                     }
                 }
 
                 if (GameManager.instance.currentPlayer == null || GameManager.instance.currentPlayer.ID != m.GetEntityId())
                 {
-                    p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                    e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
                 }
 
-                p.LastUpdate = m.GetSequenceNumber();
+                e.LastUpdate = m.GetSequenceNumber();
             }));
         }
 
@@ -68,6 +69,16 @@ namespace Assets.Server
                         Player p = (Player) GameObject.Instantiate(Resources.Load<GameObject>("Player")).GetComponent<Player>();
                         p.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(p.ID, p);
+                    }));
+                }
+
+                if(m.GetEntityType() == EntityUpdateMessage.Type.ENEMY)
+                {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                        // Refactor out!
+                        Enemy e = (Enemy)GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
+                        e.ID = m.GetEntityID();
+                        GameManager.instance.Entities.TryAdd(e.ID, e);
                     }));
                 }
             }
