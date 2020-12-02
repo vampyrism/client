@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Grid<TGridObject>
+public class PathfindingGrid<TGridObject>
 {
     private int width;
     private int height;
@@ -11,7 +11,7 @@ public class Grid<TGridObject>
     private Vector3 originPosition;
     private TGridObject[,] gridArray;
 
-    public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject){
+    public PathfindingGrid(int width, int height, float cellSize, Vector3 originPosition, Func<PathfindingGrid<TGridObject>, int, int, TGridObject> createGridObject){
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
