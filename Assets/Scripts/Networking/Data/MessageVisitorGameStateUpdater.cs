@@ -37,6 +37,11 @@ namespace Assets.Server
                     }
                 }
 
+                if (GameManager.instance.currentPlayer == null || GameManager.instance.currentPlayer.ID != m.GetEntityId())
+                {
+                    p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                }
+
                 p.LastUpdate = m.GetSequenceNumber();
             }));
         }
