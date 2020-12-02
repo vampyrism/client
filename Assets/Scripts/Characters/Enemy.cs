@@ -8,10 +8,13 @@ public class Enemy : Character
     Rigidbody2D body;
 
     [SerializeField] private float runSpeed = 8f;
-    [SerializeField] private float MinDistance = 2f;
-    [SerializeField] private float enemyReach = 2.5f;
+    [SerializeField] private float minDistance = 2f;
+    [SerializeField] private float enemyReach = 2f;
     [SerializeField] private float enemyDamage = 2f;
     [SerializeField] private float enemyAttackSpeed = 0.5f;
+
+    private Vector2 oldPosition;
+    private int stuckCount;
 
     private float timestampForNextAttack;
 
@@ -23,8 +26,12 @@ public class Enemy : Character
     private Transform currentTarget;
     private Animator animator;
 
+    // UI elements
+    [SerializeField] private HealthBar enemyHealthBar;
+
     void Start()
     {
+        enemyHealthBar.SetMaxHealth(maxHealth);
         body = GetComponent<Rigidbody2D>();
         animator  = GetComponent<Animator>();
 
@@ -37,48 +44,70 @@ public class Enemy : Character
 
         pathVectorList = null;
         currentPathIndex = 0;
+        oldPosition = transform.position;
 
         timestampForNextAttack = Time.time;
 
-        SelectTarget();
+        // Set the initial path
+        UpdatePath();
     }
 
     void Update()
     {
-        HandleMovement();
 
-        // If close to target, try to attack
-        if (Vector3.Distance(transform.position, currentTarget.position) < enemyReach) {
-            if (Time.time >= timestampForNextAttack) {
-                animator.SetTrigger("enemyAttack");
-                currentTarget.GetComponent<Character>().TakeDamage(enemyDamage);
-                timestampForNextAttack = Time.time + enemyAttackSpeed;
-            }
-        }
-    }
-
-    public void HandleMovement() {
         if (pathVectorList != null && currentTarget != null) {
             Vector3 currentPathPosition = pathVectorList[currentPathIndex];
-            //transform.right = targetPosition - transform.position;
-            Debug.DrawLine(transform.position, currentPathPosition, Color.green);
-
-            if (Vector3.Distance(transform.position, currentPathPosition) > MinDistance) {
-                Vector3 moveDir = (currentPathPosition - transform.position).normalized;
-                body.velocity = new Vector2(moveDir.x * runSpeed, moveDir.y * runSpeed);
-
-            } else {
-                currentPathIndex++;
-                // If the enemy is far away from the target it moves 7 tiles before retargeting.
-                if (currentPathIndex >= pathVectorList.Count || currentPathIndex > 7) {
-                    //Found the position of the list, stop moving or find new target
-                    pathVectorList = null;
-                    body.velocity = new Vector3(0,0,0);
+            // If close to target, try to attack
+            if (Vector3.Distance(transform.position, currentTarget.position) < enemyReach) {
+                if (Time.time >= timestampForNextAttack) {
+                    animator.SetTrigger("enemyAttack");
+                    currentTarget.GetComponent<Character>().TakeDamage(enemyDamage);
+                    timestampForNextAttack = Time.time + enemyAttackSpeed;
+                    body.velocity = new Vector3(0, 0, 0);
                 }
+            }
+            else {
+                HandleMovement();
             }
         } else {
             UpdatePath();
         }
+    }
+
+    public void HandleMovement() {
+        if ((Vector2) transform.position == oldPosition) {
+            stuckCount += 1;
+        } else {
+            stuckCount = 0;
+        }
+
+        Vector3 currentPathPosition = pathVectorList[currentPathIndex];
+
+        if (stuckCount > 4) {
+            StartCoroutine(LerpPosition((Vector2)currentPathPosition, Vector3.Distance(transform.position, currentPathPosition)/runSpeed));
+                
+            stuckCount = 0;
+        }
+
+
+        //transform.right = targetPosition - transform.position;
+        Debug.DrawLine(transform.position, currentPathPosition, Color.green);
+
+        if (Vector3.Distance(transform.position, currentPathPosition) > minDistance) {
+            Vector3 moveDir = (currentPathPosition - transform.position).normalized;
+            body.velocity = new Vector2(moveDir.x * runSpeed, moveDir.y * runSpeed);
+
+        } else {
+            currentPathIndex++;
+            // If the enemy is far away from the target it moves 7 tiles before retargeting.
+            if (currentPathIndex >= pathVectorList.Count || currentPathIndex > 7) {
+                //Found the position of the list, stop moving or find new target
+                pathVectorList = null;
+                body.velocity = new Vector3(0,0,0);
+            }
+        }
+
+        oldPosition = transform.position;
     }
 
     public Vector3 GetPosition() {
@@ -89,6 +118,7 @@ public class Enemy : Character
         Debug.Log("Enemy took " + damage + " damage!");
         animator.SetTrigger("enemyHit");
         currentHealth = currentHealth - damage;
+        enemyHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
             Destroy(gameObject);
         }
@@ -126,6 +156,18 @@ public class Enemy : Character
                 currentTarget = target;
             }
         }
+    }
+
+    IEnumerator LerpPosition(Vector2 targetPosition, float duration) {
+        float time = 0;
+        Vector2 startPosition = transform.position;
+
+        while (time < duration) {
+            transform.position = Vector2.Lerp(startPosition, targetPosition, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = targetPosition;
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
