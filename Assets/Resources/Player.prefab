@@ -146,7 +146,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 35
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 20
   currentHealth: 20
-  runSpeed: 3
+  runSpeed: 7
   playerName: Player Name
   weaponsList:
   - {fileID: 673673003763792086, guid: b57a3679d4c8be54a86c71d5c6df0226, type: 3}
