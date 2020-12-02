@@ -23,21 +23,21 @@ namespace Assets.Server
                     return;
                 }
 
-                //if (Vector2.Distance(p.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 0.5)
-                //{
-                    //p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                if (Vector2.Distance(p.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
+                {
+                    p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
 
-                if (m.GetSequenceNumber() > p.LastUpdate)
-                {
-                    p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
-                    p.LastUpdate = m.GetSequenceNumber();
+                    if (m.GetSequenceNumber() > p.LastUpdate)
+                    {
+                        p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                    }
+                    else if (Math.Abs(m.GetSequenceNumber() - p.LastUpdate) > UInt16.MaxValue / 4)
+                    {
+                        p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                    }
                 }
-                else if (Math.Abs(m.GetSequenceNumber() - p.LastUpdate) > UInt16.MaxValue / 4)
-                {
-                    p.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
-                    p.LastUpdate = m.GetSequenceNumber();
-                }
-                //}
+
+                p.LastUpdate = m.GetSequenceNumber();
             }));
         }
 
