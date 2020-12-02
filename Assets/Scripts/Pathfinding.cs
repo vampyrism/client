@@ -10,19 +10,19 @@ public class Pathfinding
     private static Pathfinding _instance;
     public static Pathfinding Instance { get; private set; }
 
-    private Grid<PathNode> grid;
+    private PathfindingGrid<PathNode> grid;
     private List<PathNode> openList;
     private List<PathNode> closedList;
     private bool changedEndNodeIsWalkable = false;
 
     public Pathfinding (int width, int height, int cellSize) {
         Instance = this;
-        grid = new Grid<PathNode>(width, height, cellSize, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+        grid = new PathfindingGrid<PathNode>(width, height, cellSize, Vector3.zero, (PathfindingGrid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         SetNodesIsWalkable();
         SetNeighbourLists();
     }
 
-    public Grid<PathNode> GetGrid() {
+    public PathfindingGrid<PathNode> GetGrid() {
         return grid;
     }
     

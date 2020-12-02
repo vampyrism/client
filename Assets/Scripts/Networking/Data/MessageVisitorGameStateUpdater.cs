@@ -20,7 +20,7 @@ namespace Assets.Server
                 
                 if(GameManager.instance.currentPlayer != null && GameManager.instance.currentPlayer.ID == m.GetEntityId())
                 {
-                    //return;
+                    return;
                 }
 
                 //if (Vector2.Distance(p.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 0.5)
