@@ -81,6 +81,11 @@ public class Player : Character {
 
         body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
     }
+    public override void DirectMove(float x, float y, float dx, float dy)
+    {
+        this.transform.position = new Vector3(x, y);
+        //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
+    }
 
     public void GrabObject() {
         if (itemOnFloor == null) {
@@ -168,7 +173,7 @@ public class Player : Character {
 
     private void FixedUpdate()
     {
-        if(transform.hasChanged)
+        if(this.Controllable && transform.hasChanged)
         {
             transform.hasChanged = false;
 

@@ -100,11 +100,15 @@ public class NetworkClient
                         this.Handshake();
                     }
 
-                    byte[] data = new byte[1024];
-                    Debug.Log("feed me data");
-                    data = this.socket.Receive(ref this.endPoint);
-                    Debug.Log("*nom* " + data);
-                    HandleRawPacket(data);
+                    while (true)
+                    {
+                        // TODO: Should try catch this as well / instead
+                        byte[] data = new byte[1024];
+                        //Debug.Log("feed me data");
+                        data = this.socket.Receive(ref this.endPoint);
+                        //Debug.Log("*nom* " + data);
+                        HandleRawPacket(data);
+                    }
                 }
                 catch(Exception e)
                 {

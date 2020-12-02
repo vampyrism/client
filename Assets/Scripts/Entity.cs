@@ -18,9 +18,16 @@ public abstract class Entity : MonoBehaviour
             }
         }
     }
+    public UInt16 LastUpdate { get; set; } = 0;
+    public bool Controllable { get; set; } = false;
     public float X { get; protected set; } = 0f;
     public float Y { get; protected set; } = 0f;
     public float DX { get; protected set; } = 0f;
     public float DY { get; protected set; } = 0f;
     public float Rotation { get; protected set; } = 0f;
+
+    public virtual void DirectMove(float x, float y, float dx, float dy)
+    {
+        throw new Exception("Cannot move Entity with id " + ID);
+    }
 }

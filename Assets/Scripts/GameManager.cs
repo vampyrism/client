@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     public ConcurrentQueue<Action> TaskQueue { get; private set; } = new ConcurrentQueue<Action>();
     public ConcurrentDictionary<UInt32, Entity> Entities { get; private set; } = new ConcurrentDictionary<UInt32, Entity>();
 
+    public Player currentPlayer;
 
     void Awake()
     {
@@ -125,11 +126,12 @@ public class GameManager : MonoBehaviour
     public void GameOver() {
         SceneManager.LoadScene("GameOver");
     }
-    
+
+    UInt16 mvseq = 0;
     public void UpdateEntityPosition(Entity e)
     {
         MovementMessage m = new MovementMessage(
-            0,
+            this.mvseq,
             e.ID,
             0,
             0,
@@ -139,6 +141,7 @@ public class GameManager : MonoBehaviour
             e.DX,
             e.DY
             );
+        this.mvseq += 1;
 
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
