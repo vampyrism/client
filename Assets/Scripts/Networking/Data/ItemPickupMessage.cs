@@ -47,7 +47,7 @@ namespace Assets.Server
 
         public ItemPickupMessage(ushort seqNum, UInt32 entityId, byte actionType, byte actionDescriptor, UInt32 itemId, ushort pickupConfirmed)
         {
-            message[TYPE_ID] = MOVEMENT;
+            message[TYPE_ID] = PICKUP;
             SetSequenceNumber(seqNum);
             SetEntityId(entityId);
             SetActionType(actionType);
