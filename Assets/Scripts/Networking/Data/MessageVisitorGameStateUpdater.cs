@@ -76,11 +76,30 @@ namespace Assets.Server
                 {
                     GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                         // Refactor out!
-                        Enemy e = (Enemy)GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
+                        Enemy e = (Enemy) GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
                         e.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(e.ID, e);
                     }));
                 }
+                if(m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_CROSSBOW) 
+                {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                        // Refactor out!
+                        Weapon w = GameObject.Instantiate(Resources.Load<GameObject>("Crossbow")).GetComponent<Crossbow>();
+                        w.ID = m.GetEntityID();
+                        GameManager.instance.Entities.TryAdd(w.ID, w);
+                    }));
+                }
+                if (m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_BOW) {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                        // Refactor out!
+                        Weapon w = GameObject.Instantiate(Resources.Load<GameObject>("Bow")).GetComponent<Bow>();
+                        w.ID = m.GetEntityID();
+                        GameManager.instance.Entities.TryAdd(w.ID, w);
+                    }));
+                }
+
+
             }
             else if(m.GetEntityAction() == EntityUpdateMessage.Action.CONTROL)
             {
