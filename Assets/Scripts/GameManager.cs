@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using Assets.Server;
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,6 +35,10 @@ public class GameManager : MonoBehaviour
 
     private GameObject[] enemyList;
 
+    public ConcurrentQueue<Action> TaskQueue { get; private set; } = new ConcurrentQueue<Action>();
+    public ConcurrentDictionary<UInt32, Entity> Entities { get; private set; } = new ConcurrentDictionary<UInt32, Entity>();
+
+    public Player currentPlayer;
 
     void Awake()
     {
@@ -52,17 +59,20 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         timeLeft = 5.0f;
-        Instantiate(tileMap, new Vector3(0f, 50f), Quaternion.identity);
+        Transform tilemap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
         cone = Instantiate(cone);
-        pathfinding = new Pathfinding(gridHeight, gridWidth);
+        pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
-        Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
+        /*Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
         Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
         Instantiate(otherPlayerPrefab, new Vector3(47f, 47f), Quaternion.identity);
         Instantiate(otherPlayerPrefab, new Vector3(4f, 4f), Quaternion.identity);
         Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
-        Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);
+        Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);*/
+
+        NetworkClient c = NetworkClient.GetInstance();
+        c.Init();
     }
     
     void Update()
@@ -92,6 +102,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        while (this.TaskQueue.Count > 0)
+        {
+            bool s = this.TaskQueue.TryDequeue(out Action a);
+
+            if (s)
+            {
+                a.Invoke();
+            }
+        }
+
+        NetworkClient.GetInstance().FixedUpdate();
+    }
+
     public void HandleKilledPlayer(Transform killedPlayer) {
         foreach (GameObject enemyGameObject in enemyList) {
             enemyGameObject.GetComponent<Enemy>().RemovePlayerFromTargets(killedPlayer);
@@ -101,5 +126,23 @@ public class GameManager : MonoBehaviour
     public void GameOver() {
         SceneManager.LoadScene("GameOver");
     }
-    
+
+    UInt16 mvseq = 0;
+    public void UpdateEntityPosition(Entity e)
+    {
+        MovementMessage m = new MovementMessage(
+            this.mvseq,
+            e.ID,
+            0,
+            0,
+            e.X,
+            e.Y,
+            e.Rotation,
+            e.DX,
+            e.DY
+            );
+        this.mvseq += 1;
+
+        NetworkClient.GetInstance().MessageQueue.Enqueue(m);
+    }
 }

@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: 752843bb80ed41849b7df70dfb1fd0c8
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 1fa25d03934ea624a82bf2fcee6f0873, type: 3}
+  missingFiles: []
+  errors: []
+  warnings:
+  - Pixels Per Unit mismatch between map (100) and tileset '[Base]BaseChip_pipo.tsx'
+    (32)
+  - Pixels Per Unit mismatch between map (100) and tileset '[A]Dirt2_pipo.tsx' (32)
+  - Pixels Per Unit mismatch between map (100) and tileset '[A]Water1_pipo.tsx' (32)
+  missingSortingLayers: []
+  missingLayers: []
+  missingTags: []
+  importerVersion: 21
+  pixelsPerUnit: 32
+  edgesPerEllipse: 32
+  numberOfObjectsImported: 2
+  tilesAsObjects: 0
+  sortingMode: 0
+  isIsometric: 0
+  customImporterClassName: 
+  internalTilesets: []

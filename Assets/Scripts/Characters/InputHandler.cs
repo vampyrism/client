@@ -9,7 +9,7 @@ public class InputHandler : MonoBehaviour {
     public Player player;
 
     void Start() {
-        player = GameObject.FindGameObjectWithTag("Player").transform.GetComponent<Player>();
+        player = (Player) this.gameObject.GetComponent<Player>(); //GameObject.FindGameObjectWithTag("Player").transform.GetComponent<Player>();
     }
 
     void Update() {

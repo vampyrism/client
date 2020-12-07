@@ -1,8 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : Character {
+    // Networking
+    public bool IsCurrentPlayer { get; set; } = false;
+
     // Variables regarding physics
     Rigidbody2D body;
     SpriteRenderer sprite;
@@ -11,11 +15,12 @@ public class Player : Character {
     // Variables regarding movement
     private float moveLimiter = 0.7f;
     [SerializeField] private float runSpeed = 1.0f;
+    [SerializeField] private string playerName;
 
-    private float x = 0.0f;
-    private float y = 0.0f;
-    private float vx = 0.0f;
-    private float vy = 0.0f;
+    /*public float x { get; private set; } = 0.0f;
+    public float y { get; private set; } = 0.0f;
+    public float vx { get; private set; } = 0.0f;
+    public float vy { get; private set; } = 0.0f;*/
 
     // Variables regarding weapons and items
     [SerializeField] private List<GameObject> weaponsList;
@@ -27,12 +32,15 @@ public class Player : Character {
     private GameObject itemOnFloor;
 
     // UI elements
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private HealthBar overworldHealthBar;
     [SerializeField] private AvailableWeapons availableWeapons;
+    [SerializeField] private Text nameTextBox;
+    [SerializeField] private HealthBar playerHealthBar;
 
     // Start is called before the first frame update
     void Start()
     {
+        nameTextBox.text = playerName;
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
@@ -47,9 +55,10 @@ public class Player : Character {
 
         currentHealth = maxHealth;
 
-        healthBar = GameObject.Find("HealthBar").GetComponent<HealthBar>();
+        overworldHealthBar = GameObject.Find("OverworldHealthBar").GetComponent<HealthBar>();
         availableWeapons = GameObject.Find("AvailableWeapons").GetComponent<AvailableWeapons>();
-        healthBar.SetMaxHealth(maxHealth);
+        overworldHealthBar.SetMaxHealth(maxHealth);
+        playerHealthBar.SetMaxHealth(maxHealth);
 
         //Setting "StartingWeapon" as first weapon
         SwitchWeapon(0);
@@ -58,10 +67,7 @@ public class Player : Character {
     // Update is called once per frame
     void Update()
     {
-        x = body.position.x;
-        y = body.position.y;
-        vx = body.velocity.x;
-        vy = body.velocity.y;
+
     }
 
     public void Move(float horizontal, float vertical) {
@@ -79,7 +85,12 @@ public class Player : Character {
             sprite.flipX = false;
         }
 
-        body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+        body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
+    }
+    public override void DirectMove(float x, float y, float dx, float dy)
+    {
+        this.transform.position = new Vector3(x, y);
+        body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
 
     public void GrabObject() {
@@ -142,7 +153,8 @@ public class Player : Character {
         Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
-        healthBar.SetHealth(currentHealth);
+        overworldHealthBar.SetHealth(currentHealth);
+        playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
             GameManager.instance.HandleKilledPlayer(transform);
             GameManager.instance.GameOver();
@@ -163,6 +175,21 @@ public class Player : Character {
         if (collision.gameObject.tag == "Weapon") {
             itemOnFloor = null;
             Debug.Log("Exiting Weapon trigger for player");
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if(this.Controllable && transform.hasChanged)
+        {
+            transform.hasChanged = false;
+
+            base.X = body.position.x;
+            base.Y = body.position.y;
+            base.DX = body.velocity.x;
+            base.DY = body.velocity.y;
+
+            GameManager.instance.UpdateEntityPosition(this);
         }
     }
 }
