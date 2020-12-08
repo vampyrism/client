@@ -145,4 +145,12 @@ public class GameManager : MonoBehaviour
 
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
+
+    public void DestroyEntityID(uint entityID) {
+        if (Entities.TryGetValue(entityID, out Entity e)) {
+            Destroy(e.gameObject);
+        } else {
+            Debug.Log("Trying to destroy entity ID: " + entityID + ", but couldn't find it.");
+        }
+    }
 }

@@ -11,4 +11,9 @@ public abstract class Weapon : Entity
     public bool isRanged;
 
     public abstract void MakeAttack(Vector2 clickPosition, Vector2 myPosition);
+
+    public override void DirectMove(float x, float y, float dx, float dy) {
+        Debug.Log("Direct move inside a weapon is called with x: " + x + ", y: " + y);
+        transform.position = new Vector2(x, y);
+    }
 }

@@ -76,11 +76,30 @@ namespace Assets.Server
                 {
                     GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                         // Refactor out!
-                        Enemy e = (Enemy)GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
+                        Enemy e = (Enemy) GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
                         e.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(e.ID, e);
                     }));
                 }
+                if(m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_CROSSBOW) 
+                {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                        // Refactor out!
+                        Weapon w = GameObject.Instantiate(Resources.Load<GameObject>("Crossbow")).GetComponent<Crossbow>();
+                        w.ID = m.GetEntityID();
+                        GameManager.instance.Entities.TryAdd(w.ID, w);
+                    }));
+                }
+                if (m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_BOW) {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                        // Refactor out!
+                        Weapon w = GameObject.Instantiate(Resources.Load<GameObject>("Bow")).GetComponent<Bow>();
+                        w.ID = m.GetEntityID();
+                        GameManager.instance.Entities.TryAdd(w.ID, w);
+                    }));
+                }
+
+
             }
             else if(m.GetEntityAction() == EntityUpdateMessage.Action.CONTROL)
             {
@@ -93,6 +112,22 @@ namespace Assets.Server
                     p.gameObject.AddComponent<InputHandler>();
                     GameObject.FindGameObjectWithTag("MainCamera").AddComponent<Follow>();
                     GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Follow>().SetTarget(p.gameObject);
+                }));
+            }
+        }
+
+        public void Visit(ItemPickupMessage m) {
+            // If the pickup was accepted
+            if (m.GetPickupConfirmed() == 1) {
+                GameManager.instance.Entities.TryGetValue((UInt32)m.GetPickupItemId(), out Entity e);
+                Weapon w = (Weapon)e;
+                GameManager.instance.Entities.TryGetValue((UInt32)m.GetEntityId(), out e);
+                Player p = (Player)e;
+
+                Debug.Log("Before calling gamemanager");
+                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    p.GrabWeapon(w);
+                    GameManager.instance.DestroyEntityID(m.GetPickupItemId());
                 }));
             }
         }

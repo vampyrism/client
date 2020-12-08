@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Server;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -93,7 +94,7 @@ public class Player : Character {
         body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
 
-    public void GrabObject() {
+    public void TryGrabObject() {
         if (itemOnFloor == null) {
             Debug.Log("Trying to grab an item when noone exist");
             return;
@@ -102,15 +103,27 @@ public class Player : Character {
             Weapon weaponOnFloor = itemOnFloor.GetComponent<Weapon>();
 
             if (weaponsBoolList[weaponOnFloor.weaponIndex] == false) {
-                weaponsBoolList[weaponOnFloor.weaponIndex] = true;
-                SwitchWeapon(weaponOnFloor.weaponIndex);
-                availableWeapons.SetActive(weaponOnFloor.weaponIndex);
-                Destroy(itemOnFloor);
-                itemOnFloor = null;
+                ItemPickupMessage m = new ItemPickupMessage(
+                    0,
+                    this.ID,
+                    0,
+                    0,
+                    weaponOnFloor.ID,
+                    0
+                    );
+                Debug.Log("I send this debug message: " + m);
+                NetworkClient.GetInstance().MessageQueue.Enqueue(m);
             } else {
                 // Already had the weapon which we tried to pick up.
             }
         }
+    }
+
+    public void GrabWeapon( Weapon weapon) {
+        weaponsBoolList[weapon.weaponIndex] = true;
+        SwitchWeapon(weapon.weaponIndex);
+        availableWeapons.SetActive(weapon.weaponIndex);
+        itemOnFloor = null;
     }
 
     public void CycleEquippedWeapon(int cycleDirection) {
