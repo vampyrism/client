@@ -50,6 +50,16 @@ namespace Assets.Server
         public void Visit(AttackMessage m)
         {
             Debug.Log(m);
+            if (m.GetAttackValid() == 1)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
+                    Player player = (Player)entity;
+                    float dmg = m.GetDamageAmount();
+                    player.TakeDamage(dmg);
+                }));
+            }
         }
 
         public void Visit(EntityUpdateMessage m)
