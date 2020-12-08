@@ -84,6 +84,10 @@ namespace Assets.Scripts
                     Debug.Log("Voice status: " + res);
                 });*/
             });
+
+            lobbyManager.OnSpeaking += (System.Int64 lobby, System.Int64 userId, bool speaking) => {
+                Debug.Log("In lobby " + lobby + " user with id " + userId + " is speaking " + speaking);
+            };
         }
 
         // Update is called once per frame
