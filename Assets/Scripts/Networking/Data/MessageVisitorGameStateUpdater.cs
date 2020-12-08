@@ -116,6 +116,22 @@ namespace Assets.Server
             }
         }
 
+        public void Visit(ItemPickupMessage m) {
+            // If the pickup was accepted
+            if (m.GetPickupConfirmed() == 1) {
+                GameManager.instance.Entities.TryGetValue((UInt32)m.GetPickupItemId(), out Entity e);
+                Weapon w = (Weapon)e;
+                GameManager.instance.Entities.TryGetValue((UInt32)m.GetEntityId(), out e);
+                Player p = (Player)e;
+
+                Debug.Log("Before calling gamemanager");
+                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    p.GrabWeapon(w);
+                    GameManager.instance.DestroyEntityID(m.GetPickupItemId());
+                }));
+            }
+        }
+
         public void Visit(Message m) { Debug.Log(m); }
     }
 }

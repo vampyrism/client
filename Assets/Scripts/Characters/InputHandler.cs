@@ -19,7 +19,7 @@ public class InputHandler : MonoBehaviour {
         player.Move(horizontal, vertical);
 
         if (Input.GetKeyDown(KeyCode.F)) {
-            player.GrabObject();
+            player.TryGrabObject();
         }
 
         if (Input.GetKeyDown(KeyCode.E)) {
