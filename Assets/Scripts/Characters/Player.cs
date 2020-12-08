@@ -80,10 +80,18 @@ public class Player : Character {
         }
 
         if (horizontal > 0) {
-            sprite.flipX = true;
+            sprite.flipX = false;
         }
         if (horizontal < 0) {
-            sprite.flipX = false;
+            sprite.flipX = true;
+        }
+
+        animator.SetFloat("xInput", horizontal);
+        animator.SetFloat("yInput", vertical);
+        if (horizontal == 0 && vertical == 0) {
+            animator.SetBool("isMoving", false);
+        } else {
+            animator.SetBool("isMoving", true);
         }
 
         body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
