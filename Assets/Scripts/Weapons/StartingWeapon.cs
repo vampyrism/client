@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class StartingWeapon : Weapon
 {
@@ -16,7 +17,7 @@ public class StartingWeapon : Weapon
         this.isRanged = false;
     }
 
-    public override void MakeAttack(Vector2 clickPosition, Vector2 playerPosition) {
+    public override void MakeAttack(Vector2 clickPosition, Vector2 playerPosition, UInt32 playerId) {
         Vector2 attackDirection = (clickPosition - (Vector2)playerPosition).normalized;
         Vector2 weaponBoxPosition = playerPosition + (attackDirection * weaponDistanceFromPlayer);
         weaponBoxPosition.y += offsetInYDirection;
@@ -34,7 +35,10 @@ public class StartingWeapon : Weapon
                     continue;
                 }
                 // Hit an Character
-                hitCharacter.TakeDamage(weaponDamage);
+                //hitCharacter.TakeDamage(weaponDamage);
+                GameManager.instance.HandleAttack(playerId, 0);
+
+                
             }
             else if (hitTargets[i].name == "Collision_Default") {
                 // Hit a wall
