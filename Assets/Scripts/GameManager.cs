@@ -56,6 +56,13 @@ public class GameManager : MonoBehaviour
         enemyList = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
+    public void HandleAttack(UInt32 playerId, short weaponType)
+    {
+        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0);
+        Debug.Log(m);
+        NetworkClient.GetInstance().MessageQueue.Enqueue(m);
+    }
+
     void InitGame()
     {
         timeLeft = 5.0f;
