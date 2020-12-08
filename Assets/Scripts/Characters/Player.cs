@@ -154,7 +154,7 @@ public class Player : Character {
     public void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
             animator.SetTrigger("Attack");
-            this.equippedWeapon.MakeAttack(targetPosition, transform.position);
+            this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
            
         } else {
