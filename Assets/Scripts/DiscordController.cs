@@ -11,7 +11,7 @@ namespace Assets.Scripts
         // Use this for initialization
         void Start()
         {
-            this.discord = new Discord.Discord(785086130143887391, (System.UInt64)Discord.CreateFlags.Default);
+            this.discord = new Discord.Discord(785086130143887391, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
             this.discord.SetLogHook(Discord.LogLevel.Debug, (Discord.LogLevel level, string message) =>
             {
                 Debug.Log(message);
@@ -22,7 +22,7 @@ namespace Assets.Scripts
             {
                 State = "In-Game",
                 Details = "With tons of other players",
-                /*Party = new Discord.ActivityParty
+                Party = new Discord.ActivityParty
                 {
                     Id = "secretysecretparty",
                     Size = new Discord.PartySize
@@ -36,18 +36,18 @@ namespace Assets.Scripts
                     Match = "secretmatchsecret",
                     Join = "secretjoinsecret",
                     Spectate = "secretspectatesecret"
-                }*/
+                }
             };
 
             activityManager.UpdateActivity(activity, (res) =>
             {
                 if (res == Discord.Result.Ok)
                 {
-                    Debug.LogError("Everything is fine!");
+                    Debug.Log("Discord Controller is OK!");
                 }
             });
 
-            var lobbyManager = discord.GetLobbyManager();
+            /*var lobbyManager = discord.GetLobbyManager();
             var txn = lobbyManager.GetLobbyCreateTransaction();
 
             // Set lobby information
@@ -79,15 +79,15 @@ namespace Assets.Scripts
                 {
                 });
 
-                /*lobbyManager.ConnectVoice(lobby.Id, (Discord.Result res) =>
+                lobbyManager.ConnectVoice(lobby.Id, (Discord.Result res) =>
                 {
                     Debug.Log("Voice status: " + res);
-                });*/
+                });
             });
 
             lobbyManager.OnSpeaking += (System.Int64 lobby, System.Int64 userId, bool speaking) => {
                 Debug.Log("In lobby " + lobby + " user with id " + userId + " is speaking " + speaking);
-            };
+            };*/
         }
 
         // Update is called once per frame
