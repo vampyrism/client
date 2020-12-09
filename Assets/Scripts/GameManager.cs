@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
@@ -58,7 +59,8 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         timeLeft = 5.0f;
-        Transform tilemap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
+        tileMap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
+        tileMap.Find("Grid").Find("ObstaclesOverPlayer").gameObject.GetComponent<TilemapRenderer>().sortingLayerName = "Unit";
         pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
@@ -134,10 +136,5 @@ public class GameManager : MonoBehaviour
         } else {
             Debug.Log("Trying to destroy entity ID: " + entityID + ", but couldn't find it.");
         }
-    }
-
-    public void OnDestroy()
-    {
-        NetworkClient.GetInstance().Destroy();
     }
 }
