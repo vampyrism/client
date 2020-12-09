@@ -75,8 +75,15 @@ public class NetworkClient
         return p;
     }
 
+    public void Destroy()
+    {
+        this.udpInstance.listenerTaskCancellationToken.Cancel();
+        this.udpInstance.listenerTaskCancellationToken.Dispose();
+    }
+
     public class UDP
     {
+        public CancellationTokenSource listenerTaskCancellationToken;
         public UdpClient socket;
         public IPEndPoint endPoint;
         public bool connected = false;
@@ -91,6 +98,9 @@ public class NetworkClient
             socket = new UdpClient();
             socket.Connect(endPoint);
 
+            this.listenerTaskCancellationToken = new CancellationTokenSource();
+            CancellationToken ct = this.listenerTaskCancellationToken.Token;
+
             Task.Run(() =>
             {
                 try
@@ -102,6 +112,11 @@ public class NetworkClient
 
                     while (true)
                     {
+                        if(ct.IsCancellationRequested)
+                        {
+                            ct.ThrowIfCancellationRequested();
+                        }
+
                         // TODO: Should try catch this as well / instead
                         byte[] data = new byte[1024];
                         //Debug.Log("feed me data");
@@ -110,7 +125,11 @@ public class NetworkClient
                         HandleRawPacket(data);
                     }
                 }
-                catch(Exception e)
+                catch (System.OperationCanceledException)
+                {
+                    Debug.Log("Closed network listener");
+                }
+                catch (Exception e)
                 {
                     Debug.LogError(e);
                 }
