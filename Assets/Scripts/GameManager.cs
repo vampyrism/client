@@ -56,9 +56,16 @@ public class GameManager : MonoBehaviour
         enemyList = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
-    public void HandleAttack(UInt32 playerId, short weaponType)
+    public void HandleAttack(UInt32 playerId, UInt32 targetId, short weaponType, Vector2 attackDirection)
     {
-        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0);
+        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, attackDirection.x, attackDirection.y);
+        Debug.Log(m);
+        NetworkClient.GetInstance().MessageQueue.Enqueue(m);
+    }
+
+    public void AttackTrigger(UInt32 playerID, UInt32 targetID, Vector2 targetPos, short weaponType)
+    {
+        AttackMessage m = new AttackMessage(0, playerID, 0, 0, targetID, weaponType, 0, 0, targetPos.x, targetPos.y);
         Debug.Log(m);
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
