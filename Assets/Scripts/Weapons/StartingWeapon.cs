@@ -35,8 +35,7 @@ public class StartingWeapon : Weapon
                     continue;
                 }
                 // Hit an Character
-                //hitCharacter.TakeDamage(weaponDamage);
-                GameManager.instance.HandleAttack(playerId, 0);
+                GameManager.instance.HandleAttack(playerId, hitCharacter.ID, 0, attackDirection);
 
                 
             }
