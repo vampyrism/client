@@ -22,6 +22,9 @@ public class NetworkClient
     public int port = 9000;
     public UDP udpInstance;
 
+    UInt16 remoteSeqNum = 0;
+    UInt16 localSeqNum = 0;
+
     public ConcurrentQueue<Message> MessageQueue { get; private set; } = new ConcurrentQueue<Message>();
 
     public static NetworkClient GetInstance() { return instance; }
@@ -55,7 +58,7 @@ public class NetworkClient
 
     private UDPPacket BuildPacket()
     {
-        UDPPacket p = new UDPPacket();
+        UDPPacket p = new UDPPacket(this.localSeqNum, this.remoteSeqNum);
         int space = p.SizeLeft();
 
         while (this.MessageQueue.Count > 0)
