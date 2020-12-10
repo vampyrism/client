@@ -112,6 +112,9 @@ namespace Assets.Server
                     p.gameObject.AddComponent<InputHandler>();
                     GameObject.FindGameObjectWithTag("MainCamera").AddComponent<Follow>();
                     GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Follow>().SetTarget(p.gameObject);
+                    GameObject visionCone = GameObject.Instantiate(Resources.Load<GameObject>("VisionCone"));
+                    visionCone.GetComponent<Follow>().SetTarget(p.gameObject);
+                    GameManager.instance.cone = visionCone.GetComponent<VisionCone>();
                 }));
             }
         }
@@ -128,6 +131,22 @@ namespace Assets.Server
                 GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                     p.GrabWeapon(w);
                     GameManager.instance.DestroyEntityID(m.GetPickupItemId());
+                }));
+            }
+        }
+
+        public void Visit(StateUpdateMessage m) {
+            Debug.Log("Player got a StateUpdateMessage");
+            if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.DAY) {
+                Debug.Log("It was a DAY message");
+                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.cone.hideCone();
+                }));
+                
+            } else if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.NIGHT) {
+                Debug.Log("It was a NIGHT message");
+                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.cone.showCone();
                 }));
             }
         }
