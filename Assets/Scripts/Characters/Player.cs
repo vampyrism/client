@@ -96,8 +96,28 @@ public class Player : Character {
 
         body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
     }
-    public override void DirectMove(float x, float y, float dx, float dy)
-    {
+    public override void DirectMove(float x, float y, float dx, float dy) {
+        float newdx = x - transform.position.x;
+        float newdy = y - transform.position.y;
+
+        Debug.Log("dx: " + ((newdx)*5) + ", dy: " + ((newdy)*5));
+
+        if (newdx > 0) {
+            sprite.flipX = false;
+        }
+        if (newdx < 0) {
+            sprite.flipX = true;
+        }
+
+        if (Mathf.Abs(newdx) < 0.1 && Mathf.Abs(newdy) < 0.1) {
+            animator.SetBool("isMoving", false);
+        }
+        else {
+            animator.SetBool("isMoving", true);
+        }
+
+        animator.SetFloat("xInput", (newdx)*5);
+        animator.SetFloat("yInput", (newdy)*5);
         this.transform.position = new Vector3(x, y);
         body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
