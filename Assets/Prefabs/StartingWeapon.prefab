@@ -46,7 +46,7 @@ MonoBehaviour:
   weaponName: startingWeapon
   weaponIndex: 0
   weaponDamage: 1
-  reloadSpeed: 1
+  reloadSpeed: 0.5
   isRanged: 0
   attackRangeX: 0.8
   attackRangeY: 1.5

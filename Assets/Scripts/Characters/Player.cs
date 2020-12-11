@@ -9,8 +9,8 @@ public class Player : Character {
     public bool IsCurrentPlayer { get; set; } = false;
 
     // Variables regarding physics
-    Rigidbody2D body;
-    SpriteRenderer sprite;
+    private Rigidbody2D body;
+    private SpriteRenderer sprite;
     private Animator animator;
 
     // Variables regarding movement
@@ -88,19 +88,19 @@ public class Player : Character {
 
         animator.SetFloat("xInput", horizontal);
         animator.SetFloat("yInput", vertical);
-        if (horizontal == 0 && vertical == 0) {
-            animator.SetBool("isMoving", false);
-        } else {
-            animator.SetBool("isMoving", true);
-        }
+        animator.SetBool("isMoving", true);
 
         body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
     }
+
+    public void StopMoving() {
+        animator.SetBool("isMoving", false);
+        body.velocity = new Vector2(0, 0);
+    }
+
     public override void DirectMove(float x, float y, float dx, float dy) {
         float newdx = x - transform.position.x;
         float newdy = y - transform.position.y;
-
-        Debug.Log("dx: " + ((newdx)*5) + ", dy: " + ((newdy)*5));
 
         if (newdx > 0) {
             sprite.flipX = false;
@@ -113,11 +113,12 @@ public class Player : Character {
             animator.SetBool("isMoving", false);
         }
         else {
+
+            animator.SetFloat("xInput", (newdx) * 5);
+            animator.SetFloat("yInput", (newdy) * 5);
             animator.SetBool("isMoving", true);
         }
 
-        animator.SetFloat("xInput", (newdx)*5);
-        animator.SetFloat("yInput", (newdy)*5);
         this.transform.position = new Vector3(x, y);
         body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }

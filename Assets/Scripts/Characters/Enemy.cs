@@ -5,7 +5,9 @@ using System;
 
 public class Enemy : Character
 {
-    Rigidbody2D body;
+    private Rigidbody2D body;
+    private SpriteRenderer sprite;
+    private Animator animator;
 
     [SerializeField] private float runSpeed = 8f;
     [SerializeField] private float minDistance = 2f;
@@ -24,7 +26,6 @@ public class Enemy : Character
 
     private List<Transform> targetList;
     private Transform currentTarget;
-    private Animator animator;
 
     // UI elements
     [SerializeField] private HealthBar enemyHealthBar;
@@ -33,6 +34,7 @@ public class Enemy : Character
     {
         enemyHealthBar.SetMaxHealth(maxHealth);
         body = GetComponent<Rigidbody2D>();
+        sprite = GetComponent<SpriteRenderer>();
         animator  = GetComponent<Animator>();
 
         /*GameObject[] OtherPlayerGameObjectList = GameObject.FindGameObjectsWithTag("OtherPlayer");
@@ -175,8 +177,24 @@ public class Enemy : Character
         //pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
     }
 
-    public override void DirectMove(float x, float y, float dx, float dy)
-    {
+    public override void DirectMove(float x, float y, float dx, float dy) { 
+
+        if (dx > 0) {
+            sprite.flipX = false;
+        }
+        if (dy < 0) {
+            sprite.flipX = true;
+        }
+
+        if (Mathf.Abs(dx) < 0.1 && Mathf.Abs(dy) < 0.1) {
+            animator.SetBool("isMoving", false);
+        }
+        else {
+            animator.SetFloat("xInput", dx);
+            animator.SetFloat("yInput", dy);
+            animator.SetBool("isMoving", true);
+        }
+
         this.transform.position = new Vector3(x, y);
         //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
