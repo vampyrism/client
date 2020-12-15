@@ -151,10 +151,9 @@ public class Player : Character {
         availableWeapons.ChooseWeapon(weaponIndex);
     }
 
-    public void TryToAttack(Vector2 targetPosition, int weaponId) {
+    public void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
-
-            equippedWeapon = weaponsList[weaponId].GetComponent<Weapon>();
+        
             animator.SetTrigger("Attack");
 
             this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
