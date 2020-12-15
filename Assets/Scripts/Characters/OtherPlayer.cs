@@ -15,4 +15,8 @@ public class OtherPlayer : Character
         }
     }
 
+    public override void StopMovement() {
+        return;
+    }
+
 }

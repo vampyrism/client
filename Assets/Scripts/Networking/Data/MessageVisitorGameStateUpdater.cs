@@ -17,30 +17,26 @@ namespace Assets.Server
             GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                 GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity e);
                 //Player p = (Player)e.gameObject.GetComponent<Player>();
-                
+
                 /*if(GameManager.instance.currentPlayer != null && GameManager.instance.currentPlayer.ID == m.GetEntityId())
                 {
                     return;
                 }*/
 
-                if (Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
-                {
-                    Debug.Log("Distance is " + Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())));
-                    e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
-
-                    if (m.GetSequenceNumber() > e.LastUpdate)
-                    {
-                        e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
-                    }
-                    else if (Math.Abs(m.GetSequenceNumber() - e.LastUpdate) > UInt16.MaxValue / 4)
-                    {
-                        e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
-                    }
+                //SHould be a stop message
+                if (m.GetActionType() == 1) {
+                    e.StopMovement();
                 }
+                else {
 
-                if (GameManager.instance.currentPlayer == null || GameManager.instance.currentPlayer.ID != m.GetEntityId())
-                {
-                    e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                    if (Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2) {
+                        Debug.Log("Entity " + m.GetEntityId() + " is far away from server position. Distance is " + Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())));
+                        e.ForceMove(m.GetXCoordinate(), m.GetYCoordinate());
+                    }
+
+                    if (GameManager.instance.currentPlayer == null || GameManager.instance.currentPlayer.ID != m.GetEntityId()) {
+                        e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
+                    }
                 }
 
                 e.LastUpdate = m.GetSequenceNumber();

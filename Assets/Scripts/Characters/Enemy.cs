@@ -175,9 +175,20 @@ public class Enemy : Character
         //pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
     }
 
-    public override void DirectMove(float x, float y, float dx, float dy)
-    {
-        this.transform.position = new Vector3(x, y);
-        //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
+    public override void DirectMove(float x, float y, float dx, float dy) {
+        //this.transform.position = new Vector3(x, y);
+
+        Vector2 diffPosition = (Vector2)transform.position - new Vector2(x, y);
+        Vector2 newDirection = new Vector2(dx, dy) - diffPosition;
+        Debug.Log("Transform: " + transform.position + ", input: " + new Vector2(x, y) + ", diff: " + diffPosition + ", origDir: " + new Vector2(dx, dy) + ", newDir: " + newDirection);
+
+
+        body.AddForce(newDirection, ForceMode2D.Impulse);
+        //body.velocity = newDirection;
+
     }
+    public override void StopMovement() {
+        body.velocity = Vector2.zero;
+    }
+
 }

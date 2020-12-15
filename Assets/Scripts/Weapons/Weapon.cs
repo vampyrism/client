@@ -16,4 +16,9 @@ public abstract class Weapon : Entity
         Debug.Log("Direct move inside a weapon is called with x: " + x + ", y: " + y);
         transform.position = new Vector2(x, y);
     }
+    public override void StopMovement() {
+        Debug.Log("StopMovement inside a weapon is called");
+        return;
+    }
+
 }

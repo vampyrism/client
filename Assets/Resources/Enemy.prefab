@@ -222,7 +222,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 546481475594392271}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -249,10 +249,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 20
   currentHealth: 20
-  runSpeed: 5
-  minDistance: 1
+  runSpeed: 8
+  minDistance: 2
   enemyReach: 2
-  enemyDamage: 3
+  enemyDamage: 2
   enemyAttackSpeed: 0.5
   currentPathIndex: 0
   enemyHealthBar: {fileID: 1202386501331077396}

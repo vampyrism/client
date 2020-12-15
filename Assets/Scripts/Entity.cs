@@ -30,4 +30,10 @@ public abstract class Entity : MonoBehaviour
     {
         throw new Exception("Cannot move Entity with id " + ID);
     }
+
+    public void ForceMove(float x, float y) {
+        transform.position = new Vector2(x, y);
+    }
+
+    public abstract void StopMovement();
 }
