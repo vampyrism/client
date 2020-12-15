@@ -236,7 +236,6 @@ public class NetworkClient
             #endregion
 
             List<Message> messages = packet.GetMessages();
-            packet.PrintHeader();
             // TODO: Refactor out from here
             MessageVisitorGameStateUpdater v = new MessageVisitorGameStateUpdater();
             foreach (Message message in messages)
