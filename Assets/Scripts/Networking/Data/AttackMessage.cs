@@ -37,9 +37,11 @@ namespace Assets.Server
         // 11-14 | Attack damage amount
         private static readonly int DAMAGE_AMOUNT = 11;
         // 15-18  | Attack vector direction
-        private static readonly int ATTACK_DIRECTION_X= 15;
+        private static readonly int ATTACK_DIRECTION_X = 15;
         // 19-22  | Attack vector direction
-        private static readonly int ATTACK_DIRECTION_Y= 19;
+        private static readonly int ATTACK_DIRECTION_Y = 19;
+        // 23  | Attack initiated 0 for false 1 for true
+        private static readonly int ATTACK_INITIATED = 24;
         // Byte array containing the information
 
         private byte[] message = new byte[MESSAGE_SIZE];
@@ -56,7 +58,7 @@ namespace Assets.Server
             message[TYPE_ID] = ATTACK;
         }
 
-        public AttackMessage(short seqNum, UInt32 entityId, byte actionType, byte actionDescriptor, UInt32 targetEntityId, short weaponType, short attackValid, float damageAmount, float attackDirectionX, float attackDirectionY)
+        public AttackMessage(short seqNum, UInt32 entityId, byte actionType, byte actionDescriptor, UInt32 targetEntityId, short weaponType, short attackValid, float damageAmount, float attackDirectionX, float attackDirectionY, short attackInit)
         {
             message[TYPE_ID] = ATTACK;
             SetSequenceNumber(seqNum);
@@ -69,6 +71,7 @@ namespace Assets.Server
             SetDamageAmount(damageAmount);
             SetAttackDirectionX(attackDirectionX);
             SetAttackDirectionY(attackDirectionY);
+            SetAttackInitiated(attackInit);
         }
 
         // The Setters will convert the argument to bytes and copy them into the message buffer
@@ -117,6 +120,10 @@ namespace Assets.Server
         {
             Array.Copy(BitConverter.GetBytes(dirY), 0, message, ATTACK_DIRECTION_Y, 4);
         }
+        public void SetAttackInitiated(short ati)
+        {
+            Array.Copy(BitConverter.GetBytes(ati), 0, message, SEQUENCE_NUMBER, 2);
+        }
 
         // Getters 
 
@@ -130,6 +137,7 @@ namespace Assets.Server
         public float GetDamageAmount() => BitConverter.ToSingle(message, DAMAGE_AMOUNT);
         public float GetAttackDirectionX() => BitConverter.ToSingle(message, ATTACK_DIRECTION_X);
         public float GetAttackDirectionY() => BitConverter.ToSingle(message, ATTACK_DIRECTION_Y);
+        public short GetAttackInitiated() => BitConverter.ToInt16(message, ATTACK_INITIATED);
         public override byte[] Serialize() => message;
 
         public override int Size() => MESSAGE_SIZE;
@@ -147,6 +155,7 @@ namespace Assets.Server
             s += "Damage Amount\t" + GetDamageAmount() + "\n";
             s += "Attack direction x\t" + GetAttackDirectionX() + "\n";
             s += "Attack Direction y\t" + GetAttackDirectionY() + "\n";
+            s += "Attack Initiated\t" + GetAttackInitiated() + "\n";
             return s;
         }
 

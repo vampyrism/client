@@ -33,7 +33,7 @@ public class InputHandler : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
-            player.TryToAttack((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            player.TryToAttack((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition), player.weaponsList.FindIndex());
         }
 
     }

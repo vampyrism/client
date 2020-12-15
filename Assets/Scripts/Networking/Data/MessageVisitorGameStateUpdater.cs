@@ -60,6 +60,23 @@ namespace Assets.Server
                     player.TakeDamage(dmg);
                 }));
             }
+
+            if (m.GetAttackInitiated() == 1)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetTargetEntityId(), out Entity entity);
+                    Player attacker = (Player)entity;
+
+                    short weapId = m.GetWeaponType();
+                    Vector2 targetPosition;
+                    targetPosition.x = m.GetAttackDirectionX();
+                    targetPosition.y = m.GetAttackDirectionY();
+
+                    attacker.TryToAttack(targetPosition, weapId);
+                }));
+            }
+            
         }
 
         public void Visit(EntityUpdateMessage m)

@@ -24,9 +24,9 @@ public class Player : Character {
     public float vy { get; private set; } = 0.0f;*/
 
     // Variables regarding weapons and items
-    [SerializeField] private List<GameObject> weaponsList;
+    [SerializeField] public List<GameObject> weaponsList;
     private List<bool> weaponsBoolList;
-    private Weapon equippedWeapon = null;
+    public Weapon equippedWeapon = null;
 
     private float timestampForNextAction;
 
@@ -151,9 +151,12 @@ public class Player : Character {
         availableWeapons.ChooseWeapon(weaponIndex);
     }
 
-    public void TryToAttack(Vector2 targetPosition) {
+    public void TryToAttack(Vector2 targetPosition, int weaponId) {
         if (Time.time >= timestampForNextAction) {
+
+            equippedWeapon = weaponsList[weaponId].GetComponent<Weapon>();
             animator.SetTrigger("Attack");
+
             this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
            
