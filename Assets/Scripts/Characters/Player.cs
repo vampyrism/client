@@ -164,6 +164,10 @@ public class Player : Character {
         }
     }
 
+    public void FakeAttack(Vector2 targetPosition) {
+        animator.SetTrigger("Attack");
+    }
+
     public override void TakeDamage(float damage) {
         Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");

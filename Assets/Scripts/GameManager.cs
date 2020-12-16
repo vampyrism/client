@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        Screen.SetResolution(640, 640, false);
         
         InitGame();
     }
@@ -56,9 +58,9 @@ public class GameManager : MonoBehaviour
         enemyList = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
-    public void HandleAttack(UInt32 playerId, UInt32 targetId, short weaponType, Vector2 attackDirection)
+    public void HandleAttack(UInt32 playerId, UInt32 targetId, short weaponType, Vector2 clickPosition)
     {
-        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, attackDirection.x, attackDirection.y, 1);
+        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1);
         Debug.Log(m);
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }

@@ -49,13 +49,12 @@ namespace Assets.Server
 
         public void Visit(AttackMessage m)
         {
-            Debug.Log(m);
             if (m.GetAttackValid() == 1)
             {
                 GameManager.instance.TaskQueue.Enqueue(new Action(() =>
                 {
                     GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
-                    Player player = (Player)entity;
+                    Character player = (Character)entity;
                     float dmg = m.GetDamageAmount();
                     player.TakeDamage(dmg);
                 }));
@@ -65,7 +64,7 @@ namespace Assets.Server
             {
                 GameManager.instance.TaskQueue.Enqueue(new Action(() =>
                 {
-                    GameManager.instance.Entities.TryGetValue(m.GetTargetEntityId(), out Entity entity);
+                    GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
                     Player attacker = (Player)entity;
 
                     short weapId = m.GetWeaponType();
@@ -73,7 +72,9 @@ namespace Assets.Server
                     targetPosition.x = m.GetAttackDirectionX();
                     targetPosition.y = m.GetAttackDirectionY();
 
-                    attacker.TryToAttack(targetPosition);
+                    // All clinets should see the attacking player do the attack animation
+                    // changed from attacker.TryToAttack(targetPosition);
+                    attacker.FakeAttack(targetPosition);
                 }));
             }
             
