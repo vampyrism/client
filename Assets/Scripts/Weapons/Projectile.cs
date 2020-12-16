@@ -31,21 +31,18 @@ public class Projectile : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collider) {
-        /*
+        
         Character hitCharacter = collider.GetComponent<Character>();
         if (hitCharacter != null) {
             if (hitCharacter.name == "Player(Clone)") {
                 return;
             }
-            // Hit an Character
-            GameManager.instance.AttackTrigger(senderId, hitCharacter.ID, clickPos, weaponType);
-            //hitCharacter.TakeDamage(projectileDamage);
+        
             Destroy(gameObject);
         } else if (collider.name == "Collision_Default"){
             // Hit a wall
             Debug.Log("Hit the wall");
             Destroy(gameObject);
         }
-        */
     }
 }

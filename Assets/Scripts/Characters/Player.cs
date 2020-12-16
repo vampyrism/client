@@ -151,7 +151,7 @@ public class Player : Character {
         availableWeapons.ChooseWeapon(weaponIndex);
     }
 
-    public void TryToAttack(Vector2 targetPosition) {
+    public override void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
         
             animator.SetTrigger("Attack");
@@ -164,7 +164,7 @@ public class Player : Character {
         }
     }
 
-    public void FakeAttack(Vector2 targetPosition) {
+    public override void FakeAttack(Vector2 targetPosition) {
         animator.SetTrigger("Attack");
     }
 

@@ -26,7 +26,6 @@ public class StartingWeapon : Weapon
         DebugDrawBox(weaponBoxPosition, new Vector2(attackRangeX, attackRangeY), AngleBetweenTwoPoints(clickPosition, playerPosition), Color.green, 3);
 
         GameManager.instance.HandleAttack(playerId, 0, 0, clickPosition);
-        /* Attack logic moved to server
         for (int i = 0; i < hitTargets.Length; i++) {
             Character hitCharacter = hitTargets[i].GetComponent<Character>();
 
@@ -37,15 +36,13 @@ public class StartingWeapon : Weapon
                     continue;
                 }
                 // Hit an Character
-                GameManager.instance.HandleAttack(playerId, hitCharacter.ID, 0, attackDirection);
-
                 
             }
             else if (hitTargets[i].name == "Collision_Default") {
                 // Hit a wall
                 Debug.Log("Hit the wall");
             }
-        }*/
+        }
     }
 
     float AngleBetweenTwoPoints(Vector3 a, Vector3 b) {

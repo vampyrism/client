@@ -54,9 +54,9 @@ namespace Assets.Server
               GameManager.instance.TaskQueue.Enqueue(new Action(() =>
               {
                   GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
-                  Character player = (Character)entity;
+                  Character attackingEntity = (Character)entity;
                   float dmg = m.GetDamageAmount();
-                  player.TakeDamage(dmg);
+                  attackingEntity.TakeDamage(dmg);
               }));
           }
 
@@ -65,16 +65,16 @@ namespace Assets.Server
               GameManager.instance.TaskQueue.Enqueue(new Action(() =>
               {
                   GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
-                  Player attacker = (Player)entity;
+                  Character attackingEntity = (Character)entity;
 
                   short weapId = m.GetWeaponType();
                   Vector2 targetPosition;
-                  targetPosition.x = m.GetAttackDirectionX();
-                  targetPosition.y = m.GetAttackDirectionY();
+                  targetPosition.x = m.GetAttackPositionX();
+                  targetPosition.y = m.GetAttackPositionY();
 
                   // All clients should see the attacking player do the attack animation
                   // changed from attacker.TryToAttack(targetPosition);
-                  attacker.FakeAttack(targetPosition);
+                  attackingEntity.FakeAttack(targetPosition);
               }));
           }
         }

@@ -15,4 +15,14 @@ public class OtherPlayer : Character
         }
     }
 
+    public override void FakeAttack(Vector2 targetPosition)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void TryToAttack(Vector2 targetPosition)
+    {
+        throw new System.NotImplementedException();
+    }
+
 }
