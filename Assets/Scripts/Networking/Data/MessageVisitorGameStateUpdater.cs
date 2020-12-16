@@ -73,7 +73,7 @@ namespace Assets.Server
                     targetPosition.x = m.GetAttackDirectionX();
                     targetPosition.y = m.GetAttackDirectionY();
 
-                    attacker.TryToAttack(targetPosition, weapId);
+                    attacker.TryToAttack(targetPosition);
                 }));
             }
             
