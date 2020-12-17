@@ -67,14 +67,16 @@ namespace Assets.Server
                   GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
                   Character attackingEntity = (Character)entity;
 
-                  short weapId = m.GetWeaponType();
-                  Vector2 targetPosition;
-                  targetPosition.x = m.GetAttackPositionX();
-                  targetPosition.y = m.GetAttackPositionY();
+                  if (attackingEntity.ID != GameManager.instance.currentPlayer.ID) {
+                        short weapId = m.GetWeaponType();
+                        Vector2 targetPosition;
+                        targetPosition.x = m.GetAttackPositionX();
+                        targetPosition.y = m.GetAttackPositionY();
 
-                  // All clients should see the attacking player do the attack animation
-                  // changed from attacker.TryToAttack(targetPosition);
-                  attackingEntity.FakeAttack(targetPosition, m.GetWeaponType());
+                        // All clients should see the attacking player do the attack animation
+                        // changed from attacker.TryToAttack(targetPosition);
+                        attackingEntity.FakeAttack(targetPosition, m.GetWeaponType());
+                  }
               }));
           }
         }

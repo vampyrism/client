@@ -138,7 +138,7 @@ public class Enemy : Character
 
     public override void FakeAttack(Vector2 targetPosition, int notUsedInEnemy)
     {
-        animator.SetTrigger("Attack");
+        animator.SetTrigger("enemyAttack");
     }
 
     private void UpdatePath() {
