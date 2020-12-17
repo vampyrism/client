@@ -74,7 +74,7 @@ namespace Assets.Server
 
                   // All clients should see the attacking player do the attack animation
                   // changed from attacker.TryToAttack(targetPosition);
-                  attackingEntity.FakeAttack(targetPosition);
+                  attackingEntity.FakeAttack(targetPosition, m.GetWeaponType());
               }));
           }
         }

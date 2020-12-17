@@ -15,7 +15,6 @@ public class Projectile : MonoBehaviour
         senderId = sendId;
         clickPos = cPos;
         weaponType = wepType;
-        GameManager.instance.AttackTrigger(senderId, 0, clickPos, weaponType);
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         rigidbody2D.AddForce(shootDirection * moveSpeed, ForceMode2D.Impulse);
         transform.eulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(shootDirection));
@@ -34,7 +33,7 @@ public class Projectile : MonoBehaviour
         
         Character hitCharacter = collider.GetComponent<Character>();
         if (hitCharacter != null) {
-            if (hitCharacter.name == "Player(Clone)") {
+            if (hitCharacter.ID == senderId) {
                 return;
             }
         

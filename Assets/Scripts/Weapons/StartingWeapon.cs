@@ -25,7 +25,6 @@ public class StartingWeapon : Weapon
         Collider2D[] hitTargets = Physics2D.OverlapBoxAll(weaponBoxPosition, new Vector2(attackRangeX, attackRangeY), AngleBetweenTwoPoints(clickPosition, playerPosition));
         DebugDrawBox(weaponBoxPosition, new Vector2(attackRangeX, attackRangeY), AngleBetweenTwoPoints(clickPosition, playerPosition), Color.green, 3);
 
-        GameManager.instance.HandleAttack(playerId, 0, 0, clickPosition);
         for (int i = 0; i < hitTargets.Length; i++) {
             Character hitCharacter = hitTargets[i].GetComponent<Character>();
 

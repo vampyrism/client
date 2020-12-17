@@ -136,7 +136,7 @@ public class Enemy : Character
         throw new NotImplementedException();
     }
 
-    public override void FakeAttack(Vector2 targetPosition)
+    public override void FakeAttack(Vector2 targetPosition, int notUsedInEnemy)
     {
         animator.SetTrigger("Attack");
     }

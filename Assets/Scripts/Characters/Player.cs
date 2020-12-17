@@ -153,10 +153,13 @@ public class Player : Character {
 
     public override void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
-        
+            GameManager.instance.HandleAttack(this.ID, targetPosition, (short) this.equippedWeapon.weaponIndex);
             animator.SetTrigger("Attack");
 
-            this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
+
+            if (this.equippedWeapon.isRanged) {
+                this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
+            }
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
            
         } else {
@@ -164,8 +167,13 @@ public class Player : Character {
         }
     }
 
-    public override void FakeAttack(Vector2 targetPosition) {
+    public override void FakeAttack(Vector2 targetPosition, int weaponType) {
         animator.SetTrigger("Attack");
+        Debug.Log("weaponType in FakeAttack: " + weaponType);
+        Weapon w = weaponsList[weaponType].GetComponent<Weapon>();
+        if (w.isRanged) {
+            w.MakeAttack(targetPosition, this.transform.position, this.ID);
+        }
     }
 
     public override void TakeDamage(float damage) {
