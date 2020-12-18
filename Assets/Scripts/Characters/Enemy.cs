@@ -118,7 +118,7 @@ public class Enemy : Character
 
     public override void TakeDamage(float damage) {
         Debug.Log("Enemy took " + damage + " damage!");
-        animator.SetTrigger("enemyHit");
+        animator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
         enemyHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
@@ -140,7 +140,7 @@ public class Enemy : Character
 
     public override void FakeAttack(Vector2 targetPosition, int notUsedInEnemy)
     {
-        animator.SetTrigger("enemyAttack");
+        animator.SetTrigger("Attack");
     }
 
     private void UpdatePath() {
@@ -186,24 +186,26 @@ public class Enemy : Character
         //pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
     }
 
-    public override void DirectMove(float x, float y, float dx, float dy) { 
+    public override void DirectMove(float x, float y, float dx, float dy) {
+        float newdx = x - transform.position.x;
+        float newdy = y - transform.position.y;
 
-        if (dx > 0) {
+        if (newdx > 0) {
             sprite.flipX = false;
         }
-        if (dy < 0) {
+        if (newdx < 0) {
             sprite.flipX = true;
         }
 
-        if (Mathf.Abs(dx) < 0.1 && Mathf.Abs(dy) < 0.1) {
+        if (Mathf.Abs(newdx) < 0.1 && Mathf.Abs(newdy) < 0.1) {
             animator.SetBool("isMoving", false);
         }
         else {
-            animator.SetFloat("xInput", dx);
-            animator.SetFloat("yInput", dy);
+
+            animator.SetFloat("xInput", (newdx) * 5);
+            animator.SetFloat("yInput", (newdy) * 5);
             animator.SetBool("isMoving", true);
         }
-
         this.transform.position = new Vector3(x, y);
         //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }

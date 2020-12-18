@@ -79,15 +79,8 @@ public class Player : Character {
           vertical *= moveLimiter;
       }
 
-      if (horizontal > 0) {
-          sprite.flipX = false;
-      }
-      if (horizontal < 0) {
-          sprite.flipX = true;
-      }
+      SetFacingDirection(new Vector2(horizontal, vertical));
 
-      animator.SetFloat("xInput", horizontal);
-      animator.SetFloat("yInput", vertical);
       animator.SetBool("isMoving", true);
 
       body.AddForce(new Vector2(horizontal * runSpeed, vertical * runSpeed), ForceMode2D.Impulse);
@@ -96,26 +89,33 @@ public class Player : Character {
     {
         float newdx = x - transform.position.x;
         float newdy = y - transform.position.y;
-
-        if (newdx > 0) {
-            sprite.flipX = false;
-        }
-        if (newdx < 0) {
-            sprite.flipX = true;
-        }
-
+        Debug.Log("newdx: " + newdx + ", newdy: " + newdy);
         if (Mathf.Abs(newdx) < 0.1 && Mathf.Abs(newdy) < 0.1) {
             animator.SetBool("isMoving", false);
         }
         else {
-
-            animator.SetFloat("xInput", (newdx) * 5);
-            animator.SetFloat("yInput", (newdy) * 5);
+            SetFacingDirection(new Vector2(newdx, newdy));
             animator.SetBool("isMoving", true);
         }
 
         this.transform.position = new Vector3(x, y);
         body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
+    }
+    public void StopMoving() {
+        animator.SetBool("isMoving", false);
+        body.velocity = new Vector2(0, 0);
+    }
+
+    public void SetFacingDirection(Vector2 direction) {
+        animator.SetFloat("xInput", direction.x);
+        animator.SetFloat("yInput", direction.y);
+
+        if (direction.x > 0) {
+            sprite.flipX = false;
+        }
+        else if (direction.x < 0) {
+            sprite.flipX = true;
+        }
     }
 
     public void TryGrabObject() {
@@ -173,13 +173,19 @@ public class Player : Character {
     private void SwitchWeapon(int weaponIndex) {
         equippedWeapon = weaponsList[weaponIndex].GetComponent<Weapon>();
         availableWeapons.ChooseWeapon(weaponIndex);
+
+        animator.SetFloat("weaponType", (float) weaponIndex);
+        Debug.Log("Switching to weapon: " + weaponIndex);
     }
 
     public override void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
             GameManager.instance.HandleAttack(this.ID, targetPosition, (short) this.equippedWeapon.weaponIndex);
-            animator.SetTrigger("Attack");
 
+            SetFacingDirection(new Vector2(targetPosition.x - transform.position.x, targetPosition.y - transform.position.y));
+            animator.SetFloat("xAttack", targetPosition.x - transform.position.x);
+            animator.SetFloat("yAttack", targetPosition.y - transform.position.y);
+            animator.SetTrigger("Attack");
 
             if (this.equippedWeapon.isRanged) {
                 this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
@@ -192,6 +198,9 @@ public class Player : Character {
     }
 
     public override void FakeAttack(Vector2 targetPosition, int weaponType) {
+        SetFacingDirection(new Vector2(targetPosition.x - transform.position.x, targetPosition.y - transform.position.y));
+        animator.SetFloat("xAttack", targetPosition.x - transform.position.x);
+        animator.SetFloat("yAttack", targetPosition.y - transform.position.y);
         animator.SetTrigger("Attack");
         Debug.Log("weaponType in FakeAttack: " + weaponType);
         Weapon w = weaponsList[weaponType].GetComponent<Weapon>();
