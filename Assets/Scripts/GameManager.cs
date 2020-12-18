@@ -6,19 +6,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
 
     private Pathfinding pathfinding;
-    
+
     public VisionCone cone;
     public Transform tileMap;
 
-    public int gridHeight = 25;
-    public int gridWidth = 25;
-    public int cellSize = 2;
+    public int gridHeight = 100;
+    public int gridWidth = 100;
+    public int cellSize = 1;
 
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject playerPrefab;
@@ -28,8 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gameCanvas;
 
     public bool isDay = true;
-    public bool isNight = false;
-    public bool coneActivated = true;
+    public bool coneDebugOverride = false;
 
     private float timeLeft;
 
@@ -42,13 +42,14 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        Screen.SetResolution(1280, 720, false);
         if (instance == null)
             instance = this;
         else if (instance != this) {
             Destroy(gameObject);
             return;
         }
-        
+
         InitGame();
     }
 
@@ -59,8 +60,8 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         timeLeft = 5.0f;
-        Transform tilemap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
-        cone = Instantiate(cone);
+        tileMap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
+        tileMap.Find("Grid").Find("ObstaclesOverPlayer").gameObject.GetComponent<TilemapRenderer>().sortingLayerName = "Unit";
         pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
@@ -74,29 +75,13 @@ public class GameManager : MonoBehaviour
         NetworkClient c = NetworkClient.GetInstance();
         c.Init();
     }
-    
+
     void Update()
-    {   
-        timeLeft -= Time.deltaTime;
-        if (isDay)
-        {
-            if (timeLeft < 0)
-            {
-                isDay = false;
-                isNight = true;
-                timeLeft += 10.0f;
-                if (coneActivated) {
-                    cone.showCone();
-                }
-            }
-        }
-        else
-        {
-            if (timeLeft < 0)
-            {
-                isDay = true;
-                isNight = false;
-                timeLeft += 5.0f;
+    {
+        if (coneDebugOverride == true) {
+            if (isDay == false) {
+                cone.showCone();
+            } else {
                 cone.hideCone();
             }
         }
@@ -115,6 +100,13 @@ public class GameManager : MonoBehaviour
         }
 
         NetworkClient.GetInstance().FixedUpdate();
+    }
+
+    public void HandleAttack(UInt32 playerId, Vector2 clickPosition, short weaponType)
+    {
+        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1);
+        Debug.Log(m);
+        NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
 
     public void HandleKilledPlayer(Transform killedPlayer) {
@@ -153,9 +145,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Trying to destroy entity ID: " + entityID + ", but couldn't find it.");
         }
     }
-
-    public void OnDestroy()
-    {
+    public void OnDestroy() {
         NetworkClient.GetInstance().Destroy();
     }
 }

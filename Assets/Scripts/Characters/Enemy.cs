@@ -133,6 +133,15 @@ public class Enemy : Character
         targetList.Remove(removedPlayer);
     }
 
+    public override void TryToAttack(Vector2 targetPosition)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void FakeAttack(Vector2 targetPosition, int notUsedInEnemy)
+    {
+        animator.SetTrigger("enemyAttack");
+    }
 
     private void UpdatePath() {
         if (currentTarget == null) {

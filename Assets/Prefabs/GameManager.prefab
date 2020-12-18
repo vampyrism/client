@@ -60,5 +60,5 @@ MonoBehaviour:
   gameCanvas: {fileID: 4135607907755975192, guid: f265376d8cff16c42a839baadd6aa30b,
     type: 3}
   isDay: 0
-  isNight: 1
-  coneActivated: 0
+  coneDebugOverride: 0
+  currentPlayer: {fileID: 0}

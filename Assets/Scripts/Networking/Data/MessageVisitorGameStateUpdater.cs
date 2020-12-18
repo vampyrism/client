@@ -17,7 +17,7 @@ namespace Assets.Server
             GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                 GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity e);
                 //Player p = (Player)e.gameObject.GetComponent<Player>();
-                
+
                 /*if(GameManager.instance.currentPlayer != null && GameManager.instance.currentPlayer.ID == m.GetEntityId())
                 {
                     return;
@@ -49,7 +49,36 @@ namespace Assets.Server
 
         public void Visit(AttackMessage m)
         {
-            Debug.Log(m);
+          if (m.GetAttackValid() == 1)
+          {
+              GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+              {
+                  GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
+                  Character attackingEntity = (Character)entity;
+                  float dmg = m.GetDamageAmount();
+                  attackingEntity.TakeDamage(dmg);
+              }));
+          }
+
+          if (m.GetAttackInitiated() == 1)
+          {
+              GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+              {
+                  GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
+                  Character attackingEntity = (Character)entity;
+
+                  if (attackingEntity.ID != GameManager.instance.currentPlayer.ID) {
+                        short weapId = m.GetWeaponType();
+                        Vector2 targetPosition;
+                        targetPosition.x = m.GetAttackPositionX();
+                        targetPosition.y = m.GetAttackPositionY();
+
+                        // All clients should see the attacking player do the attack animation
+                        // changed from attacker.TryToAttack(targetPosition);
+                        attackingEntity.FakeAttack(targetPosition, m.GetWeaponType());
+                  }
+              }));
+          }
         }
 
         public void Visit(EntityUpdateMessage m)
@@ -81,7 +110,7 @@ namespace Assets.Server
                         GameManager.instance.Entities.TryAdd(e.ID, e);
                     }));
                 }
-                if(m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_CROSSBOW) 
+                if(m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_CROSSBOW)
                 {
                     GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                         // Refactor out!
@@ -112,6 +141,9 @@ namespace Assets.Server
                     p.gameObject.AddComponent<InputHandler>();
                     GameObject.FindGameObjectWithTag("MainCamera").AddComponent<Follow>();
                     GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Follow>().SetTarget(p.gameObject);
+                    GameObject visionCone = GameObject.Instantiate(Resources.Load<GameObject>("VisionCone"));
+                    visionCone.GetComponent<Follow>().SetTarget(p.gameObject);
+                    GameManager.instance.cone = visionCone.GetComponent<VisionCone>();
                 }));
             }
         }
@@ -128,6 +160,22 @@ namespace Assets.Server
                 GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                     p.GrabWeapon(w);
                     GameManager.instance.DestroyEntityID(m.GetPickupItemId());
+                }));
+            }
+        }
+
+        public void Visit(StateUpdateMessage m) {
+            Debug.Log("Player got a StateUpdateMessage");
+            if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.DAY) {
+                Debug.Log("It was a DAY message");
+                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.cone.hideCone();
+                }));
+
+            } else if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.NIGHT) {
+                Debug.Log("It was a NIGHT message");
+                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.cone.showCone();
                 }));
             }
         }
