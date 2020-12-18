@@ -24,9 +24,9 @@ public class Player : Character {
     public float vy { get; private set; } = 0.0f;*/
 
     // Variables regarding weapons and items
-    [SerializeField] private List<GameObject> weaponsList;
+    [SerializeField] public List<GameObject> weaponsList;
     private List<bool> weaponsBoolList;
-    private Weapon equippedWeapon = null;
+    public Weapon equippedWeapon = null;
 
     private float timestampForNextAction;
 
@@ -151,14 +151,28 @@ public class Player : Character {
         availableWeapons.ChooseWeapon(weaponIndex);
     }
 
-    public void TryToAttack(Vector2 targetPosition) {
+    public override void TryToAttack(Vector2 targetPosition) {
         if (Time.time >= timestampForNextAction) {
+            GameManager.instance.HandleAttack(this.ID, targetPosition, (short) this.equippedWeapon.weaponIndex);
             animator.SetTrigger("Attack");
-            this.equippedWeapon.MakeAttack(targetPosition, transform.position);
+
+
+            if (this.equippedWeapon.isRanged) {
+                this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
+            }
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
            
         } else {
             Debug.Log("Trying to fire too fast");
+        }
+    }
+
+    public override void FakeAttack(Vector2 targetPosition, int weaponType) {
+        animator.SetTrigger("Attack");
+        Debug.Log("weaponType in FakeAttack: " + weaponType);
+        Weapon w = weaponsList[weaponType].GetComponent<Weapon>();
+        if (w.isRanged) {
+            w.MakeAttack(targetPosition, this.transform.position, this.ID);
         }
     }
 

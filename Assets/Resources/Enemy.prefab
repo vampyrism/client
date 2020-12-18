@@ -252,7 +252,7 @@ MonoBehaviour:
   runSpeed: 5
   minDistance: 1
   enemyReach: 2
-  enemyDamage: 3
+  enemyDamage: 0
   enemyAttackSpeed: 0.5
   currentPathIndex: 0
   enemyHealthBar: {fileID: 1202386501331077396}

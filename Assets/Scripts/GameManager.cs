@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
 
     private Pathfinding pathfinding;
-    
+
     public VisionCone cone;
     public Transform tileMap;
 
@@ -42,13 +42,14 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        Screen.SetResolution(1280, 720, false);
         if (instance == null)
             instance = this;
         else if (instance != this) {
             Destroy(gameObject);
             return;
         }
-        
+
         InitGame();
     }
 
@@ -74,7 +75,7 @@ public class GameManager : MonoBehaviour
         NetworkClient c = NetworkClient.GetInstance();
         c.Init();
     }
-    
+
     void Update()
     {
         if (coneDebugOverride == true) {
@@ -99,6 +100,13 @@ public class GameManager : MonoBehaviour
         }
 
         NetworkClient.GetInstance().FixedUpdate();
+    }
+
+    public void HandleAttack(UInt32 playerId, Vector2 clickPosition, short weaponType)
+    {
+        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1);
+        Debug.Log(m);
+        NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
 
     public void HandleKilledPlayer(Transform killedPlayer) {
