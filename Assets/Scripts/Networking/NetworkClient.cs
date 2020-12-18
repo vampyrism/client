@@ -36,6 +36,7 @@ public class NetworkClient
     #endregion
 
     public ConcurrentQueue<Message> MessageQueue { get; private set; } = new ConcurrentQueue<Message>();
+    public Queue<UDPPacket> PacketQueue { get; private set; } = new Queue<UDPPacket>();
 
     public static NetworkClient GetInstance() { return instance; }
 
@@ -75,8 +76,26 @@ public class NetworkClient
 
         this.LocalSeqNum += 1;
 
-        this.udpInstance.SendPacket(p);
+        #region resend_packets
+        for (int i = 1; i <= 2; i++)
+        {
+            int index = (UInt16)(this.LocalSeqNum - (UInt16)(i * 15)) % BufferSize;
 
+            if (this.SendSequenceBuffer[index] == (UInt16)(this.LocalSeqNum - (UInt16)(i * 15)))
+            {
+                if (!this.SendBuffer[index].Acked)
+                {
+                    this.PacketQueue.Enqueue(this.SendBuffer[index].Packet);
+                }
+            }
+        }
+        #endregion
+
+        this.udpInstance.SendPacket(p);
+        while (this.PacketQueue.Count > 0)
+        {
+            this.udpInstance.SendPacket(this.PacketQueue.Dequeue());
+        }
     }
 
     private UDPPacket BuildPacket()

@@ -187,6 +187,7 @@ namespace Assets.Server
             while (cursor < length)
             {
                 Message message = Message.Deserialize(bytes, cursor);
+                message.SequenceNumber = this.SequenceNumber;
                 AddMessage(message);
                 cursor += message.Size();
             }
