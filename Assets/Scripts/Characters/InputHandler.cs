@@ -16,7 +16,13 @@ public class InputHandler : MonoBehaviour {
         // Gives a value between -1 and 1
         horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
         vertical = Input.GetAxisRaw("Vertical"); // -1 is down
-        player.Move(horizontal, vertical);
+
+        if (horizontal != 0 || vertical != 0) {
+            player.Move(horizontal, vertical);
+        } else {
+            player.StopMoving();
+        }
+
 
         if (Input.GetKeyDown(KeyCode.F)) {
             player.TryGrabObject();
@@ -33,7 +39,7 @@ public class InputHandler : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
-            player.TryToAttack((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            player.TryToAttack((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition));
         }
 
     }

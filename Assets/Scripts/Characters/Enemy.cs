@@ -5,7 +5,9 @@ using System;
 
 public class Enemy : Character
 {
-    Rigidbody2D body;
+    private Rigidbody2D body;
+    private SpriteRenderer sprite;
+    private Animator animator;
 
     [SerializeField] private float runSpeed = 8f;
     [SerializeField] private float minDistance = 2f;
@@ -24,7 +26,6 @@ public class Enemy : Character
 
     private List<Transform> targetList;
     private Transform currentTarget;
-    private Animator animator;
 
     // UI elements
     [SerializeField] private HealthBar enemyHealthBar;
@@ -33,6 +34,7 @@ public class Enemy : Character
     {
         enemyHealthBar.SetMaxHealth(maxHealth);
         body = GetComponent<Rigidbody2D>();
+        sprite = GetComponent<SpriteRenderer>();
         animator  = GetComponent<Animator>();
 
         /*GameObject[] OtherPlayerGameObjectList = GameObject.FindGameObjectsWithTag("OtherPlayer");
@@ -116,7 +118,7 @@ public class Enemy : Character
 
     public override void TakeDamage(float damage) {
         Debug.Log("Enemy took " + damage + " damage!");
-        animator.SetTrigger("enemyHit");
+        animator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
         enemyHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
@@ -131,6 +133,15 @@ public class Enemy : Character
         targetList.Remove(removedPlayer);
     }
 
+    public override void TryToAttack(Vector2 targetPosition)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void FakeAttack(Vector2 targetPosition, int notUsedInEnemy)
+    {
+        animator.SetTrigger("Attack");
+    }
 
     private void UpdatePath() {
         if (currentTarget == null) {
@@ -175,8 +186,26 @@ public class Enemy : Character
         //pathVectorList[currentPathIndex] = Pathfinding.Instance.FixCornerCollision(transform.position, pathVectorList[currentPathIndex], collision.GetContact(0).point);
     }
 
-    public override void DirectMove(float x, float y, float dx, float dy)
-    {
+    public override void DirectMove(float x, float y, float dx, float dy) {
+        float newdx = x - transform.position.x;
+        float newdy = y - transform.position.y;
+
+        if (newdx > 0) {
+            sprite.flipX = false;
+        }
+        if (newdx < 0) {
+            sprite.flipX = true;
+        }
+
+        if (Mathf.Abs(newdx) < 0.1 && Mathf.Abs(newdy) < 0.1) {
+            animator.SetBool("isMoving", false);
+        }
+        else {
+
+            animator.SetFloat("xInput", (newdx) * 5);
+            animator.SetFloat("yInput", (newdy) * 5);
+            animator.SetBool("isMoving", true);
+        }
         this.transform.position = new Vector3(x, y);
         //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
