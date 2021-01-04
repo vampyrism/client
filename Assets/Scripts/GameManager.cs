@@ -1,4 +1,5 @@
-﻿using Assets.Server;
+﻿using Assets.Scripts;
+using Assets.Server;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -71,6 +72,8 @@ public class GameManager : MonoBehaviour
         Instantiate(otherPlayerPrefab, new Vector3(4f, 4f), Quaternion.identity);
         Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
         Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);*/
+
+        DiscordController discordController = new GameObject("DiscordController").AddComponent<DiscordController>();
 
         NetworkClient c = NetworkClient.GetInstance();
         c.Init();
