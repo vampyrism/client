@@ -11,17 +11,11 @@ namespace Assets.Server
     {
         public void Visit(MovementMessage m)
         {
-            //Debug.Log(m);
 
 
-            GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+            GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+            {
                 GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity e);
-                //Player p = (Player)e.gameObject.GetComponent<Player>();
-
-                /*if(GameManager.instance.currentPlayer != null && GameManager.instance.currentPlayer.ID == m.GetEntityId())
-                {
-                    return;
-                }*/
 
                 if (Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
                 {
@@ -49,76 +43,91 @@ namespace Assets.Server
 
         public void Visit(AttackMessage m)
         {
-          if (m.GetAttackValid() == 1)
-          {
-              GameManager.instance.TaskQueue.Enqueue(new Action(() =>
-              {
-                  GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
-                  Character attackingEntity = (Character)entity;
-                  float dmg = m.GetDamageAmount();
-                  attackingEntity.TakeDamage(dmg);
-              }));
-          }
+            if (m.GetAttackValid() == 1)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
+                    Character attackingEntity = (Character)entity;
+                    float dmg = m.GetDamageAmount();
+                    attackingEntity.TakeDamage(dmg);
+                }));
+            }
 
-          if (m.GetAttackInitiated() == 1)
-          {
-              GameManager.instance.TaskQueue.Enqueue(new Action(() =>
-              {
-                  GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
-                  Character attackingEntity = (Character)entity;
+            if (m.GetAttackInitiated() == 1)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
+                    Character attackingEntity = (Character) entity;
 
-                  short weapId = m.GetWeaponType();
-                  Vector2 targetPosition;
-                  targetPosition.x = m.GetAttackPositionX();
-                  targetPosition.y = m.GetAttackPositionY();
+                    short weapId = m.GetWeaponType();
+                    Vector2 targetPosition;
+                    targetPosition.x = m.GetAttackPositionX();
+                    targetPosition.y = m.GetAttackPositionY();
 
                   // All clients should see the attacking player do the attack animation
                   // changed from attacker.TryToAttack(targetPosition);
                   attackingEntity.FakeAttack(targetPosition);
-              }));
-          }
+                }));
+            }
+
+            if (m.GetEntityKilled() == 1)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetTargetEntityId(), out Entity entity);
+                    Character killedEntity = (Character) entity;
+                    killedEntity.TakeDamage(m.GetDamageAmount());
+                }));
+            }
         }
 
         public void Visit(EntityUpdateMessage m)
         {
             Debug.Log(m);
-            if(m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
+            if (m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
             {
-                if(GameManager.instance.Entities.ContainsKey(m.GetEntityID()))
+                if (GameManager.instance.Entities.ContainsKey(m.GetEntityID()))
                 {
                     return;
                 }
 
-                if(m.GetEntityType() == EntityUpdateMessage.Type.PLAYER)
+                if (m.GetEntityType() == EntityUpdateMessage.Type.PLAYER)
                 {
-                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                    {
                         // Refactor out!
-                        Player p = (Player) GameObject.Instantiate(Resources.Load<GameObject>("Player")).GetComponent<Player>();
+                        Player p = (Player)GameObject.Instantiate(Resources.Load<GameObject>("Player")).GetComponent<Player>();
                         p.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(p.ID, p);
                     }));
                 }
 
-                if(m.GetEntityType() == EntityUpdateMessage.Type.ENEMY)
+                if (m.GetEntityType() == EntityUpdateMessage.Type.ENEMY)
                 {
-                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                    {
                         // Refactor out!
-                        Enemy e = (Enemy) GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
+                        Enemy e = (Enemy)GameObject.Instantiate(Resources.Load<GameObject>("Enemy")).GetComponent<Enemy>();
                         e.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(e.ID, e);
                     }));
                 }
-                if(m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_CROSSBOW)
+                if (m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_CROSSBOW)
                 {
-                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                    {
                         // Refactor out!
                         Weapon w = GameObject.Instantiate(Resources.Load<GameObject>("Crossbow")).GetComponent<Crossbow>();
                         w.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(w.ID, w);
                     }));
                 }
-                if (m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_BOW) {
-                    GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                if (m.GetEntityType() == EntityUpdateMessage.Type.WEAPON_BOW)
+                {
+                    GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                    {
                         // Refactor out!
                         Weapon w = GameObject.Instantiate(Resources.Load<GameObject>("Bow")).GetComponent<Bow>();
                         w.ID = m.GetEntityID();
@@ -128,9 +137,10 @@ namespace Assets.Server
 
 
             }
-            else if(m.GetEntityAction() == EntityUpdateMessage.Action.CONTROL)
+            else if (m.GetEntityAction() == EntityUpdateMessage.Action.CONTROL)
             {
-                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
                     GameManager.instance.Entities.TryGetValue((UInt32)m.GetEntityID(), out Entity e);
                     Player p = (Player)e;
                     p.Controllable = true;
@@ -146,33 +156,42 @@ namespace Assets.Server
             }
         }
 
-        public void Visit(ItemPickupMessage m) {
+        public void Visit(ItemPickupMessage m)
+        {
             // If the pickup was accepted
-            if (m.GetPickupConfirmed() == 1) {
+            if (m.GetPickupConfirmed() == 1)
+            {
                 GameManager.instance.Entities.TryGetValue((UInt32)m.GetPickupItemId(), out Entity e);
                 Weapon w = (Weapon)e;
                 GameManager.instance.Entities.TryGetValue((UInt32)m.GetEntityId(), out e);
                 Player p = (Player)e;
 
                 Debug.Log("Before calling gamemanager");
-                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
                     p.GrabWeapon(w);
                     GameManager.instance.DestroyEntityID(m.GetPickupItemId());
                 }));
             }
         }
 
-        public void Visit(StateUpdateMessage m) {
+        public void Visit(StateUpdateMessage m)
+        {
             Debug.Log("Player got a StateUpdateMessage");
-            if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.DAY) {
+            if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.DAY)
+            {
                 Debug.Log("It was a DAY message");
-                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
                     GameManager.instance.cone.hideCone();
                 }));
 
-            } else if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.NIGHT) {
+            }
+            else if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.NIGHT)
+            {
                 Debug.Log("It was a NIGHT message");
-                GameManager.instance.TaskQueue.Enqueue(new Action(() => {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
                     GameManager.instance.cone.showCone();
                 }));
             }
