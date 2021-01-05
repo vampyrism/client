@@ -128,6 +128,7 @@ namespace Assets.Server
             }
         }
 
+        public void Visit(PlayerUpdateMessage m) { }
         public void Visit(Message m) { Debug.Log(m); }
     }
 }
