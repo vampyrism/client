@@ -16,46 +16,91 @@ using System.Collections.Concurrent;
 public class NetworkClient
 {
     public static NetworkClient instance = new NetworkClient();
-    public static int BufferSize = 1024;
     public int myId = 0;
     public string ip = "127.0.0.1";
     public int port = 9000;
     public UDP udpInstance;
 
+    #region sequence_numbers
+    public UInt16 RemoteSeqNum { get; private set; }
+    public UInt16 LocalSeqNum { get; private set; }
+    #endregion
+
+    // Send and Receive buffers
+    #region send_receive_buffers
+    private static readonly int BufferSize = 1024;
+    public UInt32[] ReceiveSequenceBuffer { get; private set; } = new UInt32[BufferSize];
+    public UInt32[] SendSequenceBuffer { get; private set; } = new UInt32[BufferSize];
+    public UDPAckPacket[] ReceiveBuffer { get; private set; } = new UDPAckPacket[BufferSize];
+    public UDPAckPacket[] SendBuffer { get; private set; } = new UDPAckPacket[BufferSize];
+    #endregion
+
     public ConcurrentQueue<Message> MessageQueue { get; private set; } = new ConcurrentQueue<Message>();
+    public Queue<UDPPacket> PacketQueue { get; private set; } = new Queue<UDPPacket>();
 
     public static NetworkClient GetInstance() { return instance; }
 
     public void Init()
     {
-        udpInstance = new UDP();
-        udpInstance.Connect(0);
+        #region initialize_buffers
+        this.RemoteSeqNum = 0;
+        this.LocalSeqNum = 0;
+        this.ReceiveSequenceBuffer = new UInt32[BufferSize];
+        this.SendSequenceBuffer = new UInt32[BufferSize];
+        this.ReceiveBuffer = new UDPAckPacket[BufferSize];
+        this.SendBuffer = new UDPAckPacket[BufferSize];
+
+        for (int i = 0; i < BufferSize; i++)
+        {
+            this.ReceiveSequenceBuffer[i] = 0xFFFFFFFF;
+            this.SendSequenceBuffer[i] = 0xFFFFFFFF;
+        }
+        #endregion
+
+        this.udpInstance = new UDP();
+        this.udpInstance.Connect(0);
     }
 
     public void FixedUpdate()
     {
-        /*Debug.Log("Sending packet");
-        Player p = GameObject.Find("Player(Clone)").GetComponent<Player>();
-        float x = p.x;
-        float y = p.y;
-        float xp = p.vx;
-        float yp = p.vy;
-        float rot = 0f;
-
-        MovementMessage mm = new MovementMessage(0, 0, 0, 0, x, y, rot, xp, yp);
-        UDPPacket packet = new UDPPacket();
-        packet.AddMessage(mm);
-
-        this.udpInstance.SendPacket(packet);*/
-
         UDPPacket p = BuildPacket();
-        this.udpInstance.SendPacket(p);
 
+        this.SendBuffer[this.LocalSeqNum % BufferSize] = new UDPAckPacket
+        {
+            Acked = false,
+            SendTime = Time.realtimeSinceStartup, // Note: we care about diff between send-ACK time for RTT calc
+            Packet = p
+        };
+        
+        this.SendSequenceBuffer[this.LocalSeqNum % BufferSize] = this.LocalSeqNum;
+
+        this.LocalSeqNum += 1;
+
+        #region resend_packets
+        for (int i = 1; i <= 2; i++)
+        {
+            int index = (UInt16)(this.LocalSeqNum - (UInt16)(i * 15)) % BufferSize;
+
+            if (this.SendSequenceBuffer[index] == (UInt16)(this.LocalSeqNum - (UInt16)(i * 15)))
+            {
+                if (!this.SendBuffer[index].Acked)
+                {
+                    this.PacketQueue.Enqueue(this.SendBuffer[index].Packet);
+                }
+            }
+        }
+        #endregion
+
+        this.udpInstance.SendPacket(p);
+        while (this.PacketQueue.Count > 0)
+        {
+            this.udpInstance.SendPacket(this.PacketQueue.Dequeue());
+        }
     }
 
     private UDPPacket BuildPacket()
     {
-        UDPPacket p = new UDPPacket();
+        UDPPacket p = new UDPPacket(this.LocalSeqNum, this.RemoteSeqNum);
         int space = p.SizeLeft();
 
         while (this.MessageQueue.Count > 0)
@@ -74,6 +119,49 @@ public class NetworkClient
 
         return p;
     }
+
+    private int WrapArray(int a)
+    {
+        if(a < 0)
+        {
+            return BufferSize + a;
+        } 
+        else
+        {
+            return a;
+        }
+    }
+
+    public void AckIncomingPacket(UDPPacket packet)
+    {
+        int i = packet.SequenceNumber % BufferSize;
+
+        if (packet.SequenceNumber > this.RemoteSeqNum)
+        {
+            this.RemoteSeqNum = packet.SequenceNumber;
+        }
+
+        this.ReceiveSequenceBuffer[i] = packet.SequenceNumber;
+        this.ReceiveBuffer[i].Acked = true;
+        this.ReceiveBuffer[i].Packet = packet;
+
+
+        i = packet.AckNumber % BufferSize;
+        if (this.SendSequenceBuffer[i] == packet.AckNumber)
+        {
+            this.SendBuffer[i].Acked = true;
+        }
+
+        for (UInt16 offset = 1; offset <= 32; offset++)
+        {
+            if (packet.AckArray[offset - 1])
+            {
+                if (this.SendSequenceBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)] == (packet.AckNumber - offset))
+                {
+                    this.SendBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)].Acked = true;
+                }
+            }
+        }
 
     public void Destroy()
     {
@@ -179,8 +267,12 @@ public class NetworkClient
         public void HandleRawPacket(byte[] data)
         {
             UDPPacket packet = new UDPPacket(data);
-            List<Message> messages = packet.GetMessages();
 
+            #region ackpacket
+            NetworkClient.GetInstance().AckIncomingPacket(packet);
+            #endregion
+
+            List<Message> messages = packet.GetMessages();
             // TODO: Refactor out from here
             MessageVisitorGameStateUpdater v = new MessageVisitorGameStateUpdater();
             foreach (Message message in messages)
