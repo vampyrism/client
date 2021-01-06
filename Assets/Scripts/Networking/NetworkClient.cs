@@ -162,6 +162,7 @@ public class NetworkClient
                 }
             }
         }
+    }
 
     public void Destroy()
     {
