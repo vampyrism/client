@@ -13,6 +13,7 @@ namespace Assets.Server
         void Visit(EntityUpdateMessage m);
         void Visit(ItemPickupMessage m);
         void Visit(PlayerUpdateMessage m);
+        void Visit(StateUpdateMessage m);
         void Visit(Message m);
     }
 }
