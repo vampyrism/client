@@ -36,80 +36,6 @@ public class Enemy : Character
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator  = GetComponent<Animator>();
-
-        /*GameObject[] OtherPlayerGameObjectList = GameObject.FindGameObjectsWithTag("OtherPlayer");
-        targetList = new List<Transform>();
-        foreach (GameObject OtherPlayerGameObject in OtherPlayerGameObjectList) {
-            targetList.Add(OtherPlayerGameObject.transform);
-        }
-        targetList.Add(GameObject.FindGameObjectWithTag("Player").transform);
-
-        pathVectorList = null;
-        currentPathIndex = 0;
-        oldPosition = transform.position;
-
-        timestampForNextAttack = Time.time;
-
-        // Set the initial path
-        UpdatePath();*/
-    }
-
-    void Update()
-    {
-
-        /*if (pathVectorList != null && currentTarget != null) {
-            Vector3 currentPathPosition = pathVectorList[currentPathIndex];
-            // If close to target, try to attack
-            if (Vector3.Distance(transform.position, currentTarget.position) < enemyReach) {
-                if (Time.time >= timestampForNextAttack) {
-                    animator.SetTrigger("enemyAttack");
-                    currentTarget.GetComponent<Character>().TakeDamage(enemyDamage);
-                    timestampForNextAttack = Time.time + enemyAttackSpeed;
-                    body.velocity = new Vector3(0, 0, 0);
-                }
-            }
-            else {
-                HandleMovement();
-            }
-        } else {
-            UpdatePath();
-        }*/
-    }
-
-    public void HandleMovement() {
-        if ((Vector2) transform.position == oldPosition) {
-            stuckCount += 1;
-        } else {
-            stuckCount = 0;
-        }
-
-        Vector3 currentPathPosition = pathVectorList[currentPathIndex];
-
-        if (stuckCount > 4) {
-            StartCoroutine(LerpPosition((Vector2)currentPathPosition, Vector3.Distance(transform.position, currentPathPosition)/runSpeed));
-                
-            stuckCount = 0;
-        }
-
-
-        //transform.right = targetPosition - transform.position;
-        Debug.DrawLine(transform.position, currentPathPosition, Color.green);
-
-        if (Vector3.Distance(transform.position, currentPathPosition) > minDistance) {
-            Vector3 moveDir = (currentPathPosition - transform.position).normalized;
-            body.velocity = new Vector2(moveDir.x * runSpeed, moveDir.y * runSpeed);
-
-        } else {
-            currentPathIndex++;
-            // If the enemy is far away from the target it moves 7 tiles before retargeting.
-            if (currentPathIndex >= pathVectorList.Count || currentPathIndex > 7) {
-                //Found the position of the list, stop moving or find new target
-                pathVectorList = null;
-                body.velocity = new Vector3(0,0,0);
-            }
-        }
-
-        oldPosition = transform.position;
     }
 
     public Vector3 GetPosition() {
@@ -140,6 +66,19 @@ public class Enemy : Character
 
     public override void FakeAttack(Vector2 targetPosition, int notUsedInEnemy)
     {
+        float newdx = targetPosition.x - transform.position.x;
+        float newdy = targetPosition.y - transform.position.y;
+
+        if (newdx > 0) {
+            sprite.flipX = false;
+        }
+        if (newdx < 0) {
+            sprite.flipX = true;
+        }
+
+        animator.SetFloat("xInput", newdx);
+        animator.SetFloat("yInput", newdy);
+
         animator.SetTrigger("Attack");
     }
 
@@ -197,13 +136,14 @@ public class Enemy : Character
             sprite.flipX = true;
         }
 
+        animator.SetFloat("xInput", newdx);
+        animator.SetFloat("yInput", newdy);
+
+
         if (Mathf.Abs(newdx) < 0.1 && Mathf.Abs(newdy) < 0.1) {
             animator.SetBool("isMoving", false);
         }
         else {
-
-            animator.SetFloat("xInput", (newdx) * 5);
-            animator.SetFloat("yInput", (newdy) * 5);
             animator.SetBool("isMoving", true);
         }
         this.transform.position = new Vector3(x, y);

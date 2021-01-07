@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class Player : Character {
     // Networking
-    public bool IsCurrentPlayer { get; set; } = false;
 
     // Variables regarding physics
     Rigidbody2D body;
@@ -55,10 +54,6 @@ public class Player : Character {
         }
 
         currentHealth = maxHealth;
-
-        overworldHealthBar = GameObject.Find("OverworldHealthBar").GetComponent<HealthBar>();
-        availableWeapons = GameObject.Find("AvailableWeapons").GetComponent<AvailableWeapons>();
-        overworldHealthBar.SetMaxHealth(maxHealth);
         playerHealthBar.SetMaxHealth(maxHealth);
 
         //Setting "StartingWeapon" as first weapon
@@ -90,7 +85,7 @@ public class Player : Character {
         float newdx = x - transform.position.x;
         float newdy = y - transform.position.y;
         Debug.Log("newdx: " + newdx + ", newdy: " + newdy);
-        if (Mathf.Abs(newdx) < 0.1 && Mathf.Abs(newdy) < 0.1) {
+        if (Mathf.Abs(newdx) < 0.2 && Mathf.Abs(newdy) < 0.2) {
             animator.SetBool("isMoving", false);
         }
         else {
@@ -146,7 +141,9 @@ public class Player : Character {
     public void GrabWeapon( Weapon weapon) {
         weaponsBoolList[weapon.weaponIndex] = true;
         SwitchWeapon(weapon.weaponIndex);
-        availableWeapons.SetActive(weapon.weaponIndex);
+        if (this.Controllable == true) {
+            availableWeapons.SetActive(weapon.weaponIndex);
+        }
         itemOnFloor = null;
     }
 
@@ -172,8 +169,9 @@ public class Player : Character {
 
     private void SwitchWeapon(int weaponIndex) {
         equippedWeapon = weaponsList[weaponIndex].GetComponent<Weapon>();
-        availableWeapons.ChooseWeapon(weaponIndex);
-
+        if (this.Controllable == true) {
+            availableWeapons.ChooseWeapon(weaponIndex);
+        }
         animator.SetFloat("weaponType", (float) weaponIndex);
         Debug.Log("Switching to weapon: " + weaponIndex);
     }
@@ -213,13 +211,21 @@ public class Player : Character {
         Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
-        overworldHealthBar.SetHealth(currentHealth);
+        if (this.Controllable == true) {
+            overworldHealthBar.SetHealth(currentHealth);
+        }
         playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
             GameManager.instance.HandleKilledPlayer(transform);
             GameManager.instance.GameOver();
             Destroy(gameObject);
         }
+    }
+
+    public void SetupControllable() {
+        overworldHealthBar = GameObject.Find("OverworldHealthBar").GetComponent<HealthBar>();
+        availableWeapons = GameObject.Find("AvailableWeapons").GetComponent<AvailableWeapons>();
+        overworldHealthBar.SetMaxHealth(maxHealth);
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

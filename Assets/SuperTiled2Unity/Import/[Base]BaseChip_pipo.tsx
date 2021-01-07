@@ -603,8 +603,8 @@
  </tile>
  <tile id="919">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="6" y="4">
-    <polygon points="0,0 19,0 23,6 23,16 15,26 7,26 -2,16 -2,5"/>
+   <object id="2" x="4" y="17">
+    <polygon points="0,0 0,-8 5,-17 18,-17 24,-7 24,0 22,11 15,13 7,13 0,2"/>
    </object>
   </objectgroup>
  </tile>
@@ -645,8 +645,8 @@
  </tile>
  <tile id="935">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="4" y="12">
-    <polyline points="0,0 24,0 24,5 18,18 6,18 -1,5 -1,0 1,0"/>
+   <object id="3" x="2" y="0">
+    <polygon points="0,0 0,8 1,20 9,29 11,30 18,30 25,24 27,16 28,7 28,0"/>
    </object>
   </objectgroup>
  </tile>
