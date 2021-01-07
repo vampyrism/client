@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 
@@ -32,6 +33,9 @@ namespace Assets.Server
             byte type = bytes[cursor];
             return (Message)typeConstructors[type].DynamicInvoke(bytes, cursor);
         }
+
+        // Add packet sequence number when deserializing
+        public UInt16 SequenceNumber;
 
         // Abstract
 
