@@ -11,6 +11,7 @@ public class Player : Character {
     Rigidbody2D body;
     SpriteRenderer sprite;
     private Animator animator;
+    private Animator bloodAnimator;
 
     // Variables regarding movement
     private float moveLimiter = 0.7f;
@@ -44,6 +45,7 @@ public class Player : Character {
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        bloodAnimator = this.gameObject.transform.GetChild(0).gameObject.GetComponent<Animator>();
 
         weaponsBoolList = new List<bool>();
         // Setting true for "startingWeapon" position
@@ -104,13 +106,6 @@ public class Player : Character {
     public void SetFacingDirection(Vector2 direction) {
         animator.SetFloat("xInput", direction.x);
         animator.SetFloat("yInput", direction.y);
-
-        if (direction.x > 0) {
-            sprite.flipX = false;
-        }
-        else if (direction.x < 0) {
-            sprite.flipX = true;
-        }
     }
 
     public void TryGrabObject() {
@@ -210,6 +205,7 @@ public class Player : Character {
     public override void TakeDamage(float damage) {
         Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
+        bloodAnimator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
         if (this.Controllable == true) {
             overworldHealthBar.SetHealth(currentHealth);
