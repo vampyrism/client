@@ -180,9 +180,8 @@ public class Player : Character {
             animator.SetFloat("yAttack", targetPosition.y - transform.position.y);
             animator.SetTrigger("Attack");
 
-            if (this.equippedWeapon.isRanged) {
-                this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
-            }
+            this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
+            
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
 
         } else {
@@ -197,9 +196,8 @@ public class Player : Character {
         animator.SetTrigger("Attack");
         Debug.Log("weaponType in FakeAttack: " + weaponType);
         Weapon w = weaponsList[weaponType].GetComponent<Weapon>();
-        if (w.isRanged) {
-            w.MakeAttack(targetPosition, this.transform.position, this.ID);
-        }
+        w.MakeAttack(targetPosition, this.transform.position, this.ID);
+        
     }
 
     public override void TakeDamage(float damage) {

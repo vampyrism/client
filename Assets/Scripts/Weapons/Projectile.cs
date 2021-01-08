@@ -15,8 +15,8 @@ public class Projectile : MonoBehaviour
         senderId = sendId;
         clickPos = cPos;
         weaponType = wepType;
-        Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
-        rigidbody2D.AddForce(shootDirection * moveSpeed, ForceMode2D.Impulse);
+        Rigidbody2D body = GetComponent<Rigidbody2D>();
+        body.AddForce(shootDirection * moveSpeed, ForceMode2D.Impulse);
         transform.eulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(shootDirection));
         Destroy(gameObject, 5f);
     }
@@ -37,11 +37,15 @@ public class Projectile : MonoBehaviour
                 return;
             }
         
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         } else if (collider.name == "Collision_Default"){
             // Hit a wall
             Debug.Log("Hit the wall");
-            Destroy(gameObject);
+            Rigidbody2D body = GetComponent<Rigidbody2D>();
+            GetComponent<BoxCollider2D>().enabled = false;
+            body.velocity = new Vector2(0, 0);
+            GetComponent<Animator>().SetBool("Destroy", true);
+            Destroy(this.gameObject, 0.5f);
         }
     }
 }
