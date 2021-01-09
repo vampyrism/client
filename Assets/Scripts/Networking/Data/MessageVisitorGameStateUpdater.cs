@@ -78,6 +78,7 @@ namespace Assets.Server
                 {
                     GameManager.instance.Entities.TryGetValue(m.GetTargetEntityId(), out Entity entity);
                     Character killedEntity = (Character) entity;
+                    //Destroy(killedEntity.gameObject);
                     killedEntity.TakeDamage(m.GetDamageAmount());
                 }));
             }
@@ -86,6 +87,20 @@ namespace Assets.Server
         public void Visit(EntityUpdateMessage m)
         {
             Debug.Log(m);
+            if (m.GetEntityAction() == EntityUpdateMessage.Action.HP_UPDATE)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetEntityID(), out Entity entity);
+                    Character entityHp = (Character) entity;
+
+                    entityHp.currentHealth = m.GetEntityHP();
+
+
+                    
+                }));
+            }
+
             if (m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
             {
                 if (GameManager.instance.Entities.ContainsKey(m.GetEntityID()))
@@ -134,6 +149,8 @@ namespace Assets.Server
                         GameManager.instance.Entities.TryAdd(w.ID, w);
                     }));
                 }
+
+
 
 
             }
