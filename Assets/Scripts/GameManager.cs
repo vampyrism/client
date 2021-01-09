@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
         NetworkClient.GetInstance().FixedUpdate();
     }
 
-    public void HandleAttack(UInt32 playerId, UInt32 targetId, short weaponType, Vector2 clickPosition)
+    public void HandleAttack(UInt32 playerId, Vector2 clickPosition, short weaponType)
     {
         AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1, 0);
         Debug.Log(m);

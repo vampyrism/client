@@ -15,7 +15,7 @@ public class OtherPlayer : Character
         }
     }
 
-    public override void FakeAttack(Vector2 targetPosition)
+    public override void FakeAttack(Vector2 targetPosition, int weaponType)
     {
         throw new System.NotImplementedException();
     }

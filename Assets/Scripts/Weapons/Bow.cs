@@ -15,10 +15,10 @@ public class Bow : Weapon
         this.isRanged = true;
     }
 
-    public override void MakeAttack(Vector2 clickPosition, Vector2 spawnPosition, UInt32 playerId) {
+    public override void MakeAttack(Vector2 clickPosition, Vector2 spawnPosition, UInt32 shooterID) {
         Vector2 attackDirection = (clickPosition - (Vector2) spawnPosition).normalized;
         Transform projectileTransform = Instantiate(projectile, spawnPosition, Quaternion.identity);
-        projectileTransform.GetComponent<Projectile>().Setup(attackDirection, weaponDamage, playerId, clickPosition, 1);
+        projectileTransform.GetComponent<Projectile>().Setup(attackDirection, weaponDamage, shooterID, clickPosition, 1);
     }
 
 }
