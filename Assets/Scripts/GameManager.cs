@@ -33,6 +33,10 @@ public class GameManager : MonoBehaviour
     public bool coneDebugOverride = false;
 
     private float timeLeft;
+    private float totalPlayersCount;
+    private float currentPlayersCount;
+    private Text totalPlayersField;
+    private Text currentPlayersField;
 
     private GameObject[] enemyList;
 
@@ -66,12 +70,8 @@ public class GameManager : MonoBehaviour
         pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
-        /*Instantiate(enemyPrefab, new Vector3(42f, 44f), Quaternion.identity);
-        Instantiate(playerPrefab, new Vector3(34f, 34f), Quaternion.identity);
-        Instantiate(otherPlayerPrefab, new Vector3(47f, 47f), Quaternion.identity);
-        Instantiate(otherPlayerPrefab, new Vector3(4f, 4f), Quaternion.identity);
-        Instantiate(bow, new Vector3(34f, 32f), Quaternion.identity);
-        Instantiate(crossbow, new Vector3(32f, 32f), Quaternion.identity);*/
+        totalPlayersField = GameObject.Find("TotalPlayers").GetComponent<Text>();
+        currentPlayersField = GameObject.Find("CurrentPlayers").GetComponent<Text>();
 
         DiscordController discordController = new GameObject("DiscordController").AddComponent<DiscordController>();
 
@@ -144,10 +144,31 @@ public class GameManager : MonoBehaviour
     public void DestroyEntityID(uint entityID) {
         if (Entities.TryGetValue(entityID, out Entity e)) {
             Destroy(e.gameObject);
+
+            if (e.GetType() == typeof(Player)) {
+                currentPlayersCount -= 1;
+                this.currentPlayersField.text = this.currentPlayersCount.ToString();
+            }
+
         } else {
             Debug.Log("Trying to destroy entity ID: " + entityID + ", but couldn't find it.");
         }
     }
+
+    public void countNewPlayer() {
+        this.currentPlayersCount += 1;
+        this.totalPlayersCount += 1;
+        this.currentPlayersField.text = this.currentPlayersCount.ToString();
+        this.totalPlayersField.text = this.totalPlayersCount.ToString();
+    }
+
+    public float getCurrentCount() {
+        return this.currentPlayersCount;
+    }
+    public float getTotalCount() {
+        return this.totalPlayersCount;
+    }
+
     public void OnDestroy() {
         NetworkClient.GetInstance().Destroy();
     }

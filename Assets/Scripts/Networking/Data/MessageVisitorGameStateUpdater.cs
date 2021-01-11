@@ -92,6 +92,7 @@ namespace Assets.Server
                     GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                         // Refactor out!
                         Player p = (Player) GameObject.Instantiate(Resources.Load<GameObject>("Player")).GetComponent<Player>();
+                        GameManager.instance.countNewPlayer();
                         p.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(p.ID, p);
                     }));
