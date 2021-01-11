@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     private float currentPlayersCount;
     private Text totalPlayersField;
     private Text currentPlayersField;
+    private Text lobbyField;
 
     private GameObject[] enemyList;
 
@@ -72,6 +73,7 @@ public class GameManager : MonoBehaviour
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
         totalPlayersField = GameObject.Find("TotalPlayers").GetComponent<Text>();
         currentPlayersField = GameObject.Find("CurrentPlayers").GetComponent<Text>();
+        lobbyField = GameObject.Find("LobbyText").GetComponent<Text>();
 
         DiscordController discordController = new GameObject("DiscordController").AddComponent<DiscordController>();
 
@@ -161,12 +163,9 @@ public class GameManager : MonoBehaviour
         this.currentPlayersField.text = this.currentPlayersCount.ToString();
         this.totalPlayersField.text = this.totalPlayersCount.ToString();
     }
-
-    public float getCurrentCount() {
-        return this.currentPlayersCount;
-    }
-    public float getTotalCount() {
-        return this.totalPlayersCount;
+    
+    public void disableLobbyText() {
+        this.lobbyField.enabled = false;
     }
 
     public void OnDestroy() {
