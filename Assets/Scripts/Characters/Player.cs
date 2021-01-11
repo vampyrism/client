@@ -84,19 +84,17 @@ public class Player : Character {
     }
     public override void DirectMove(float x, float y, float dx, float dy)
     {
-        float newdx = x - transform.position.x;
-        float newdy = y - transform.position.y;
-        Debug.Log("newdx: " + newdx + ", newdy: " + newdy);
-        if (Mathf.Abs(newdx) < 0.2 && Mathf.Abs(newdy) < 0.2) {
+        Debug.Log("dx: " + dx + "dy: " + dy);
+        if (dx == 0 && dy == 0) {
             animator.SetBool("isMoving", false);
         }
         else {
-            SetFacingDirection(new Vector2(newdx, newdy));
+            SetFacingDirection(new Vector2(dx, dy));
             animator.SetBool("isMoving", true);
         }
 
         this.transform.position = new Vector3(x, y);
-        body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
+        //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
     public void StopMoving() {
         animator.SetBool("isMoving", false);
