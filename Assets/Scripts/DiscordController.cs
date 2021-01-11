@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Assets.Scripts
 {
+    
     public class DiscordController : MonoBehaviour
     {
         public static DiscordController instance;
@@ -20,7 +21,7 @@ namespace Assets.Scripts
         {
             DiscordController.instance = this;
             System.Environment.SetEnvironmentVariable("DISCORD_INSTANCE_ID", "0");
-            this.discord = new Discord.Discord(785086130143887391, (System.UInt64)Discord.CreateFlags.Default);
+            this.discord = new Discord.Discord(785086130143887391, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
             this.discord.SetLogHook(Discord.LogLevel.Debug, (Discord.LogLevel level, string message) =>
             {
                 Debug.Log(message);

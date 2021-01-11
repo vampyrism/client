@@ -13,7 +13,7 @@ using UnityEngine.Networking;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
-    public static string lobbyManager = "https://menpaid.lynk.sh";
+    public static string lobbyManager = "http://lobby.vampyrism.dev.deltafault.com";
 
     public string LobbyId;
     public LobbyResponse Lobby;
