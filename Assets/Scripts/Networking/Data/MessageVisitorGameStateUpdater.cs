@@ -91,8 +91,6 @@ namespace Assets.Server
 
         public void Visit(EntityUpdateMessage m)
         {
-            Debug.Log(m);
-
             if (m.GetEntityAction() == EntityUpdateMessage.Action.HP_UPDATE)
             {
                 GameManager.instance.TaskQueue.Enqueue(new Action(() =>
@@ -101,8 +99,6 @@ namespace Assets.Server
                     Character entityHP = (Character)entity;
                     entityHP.currentHealth = m.GetEntityHP();
                 }));
-                Debug.Log(m);
-                Debug.LogError("hello");
             }
 
             if (m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
