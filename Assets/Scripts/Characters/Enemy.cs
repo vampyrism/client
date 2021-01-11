@@ -48,7 +48,7 @@ public class Enemy : Character
         currentHealth = currentHealth - damage;
         enemyHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 

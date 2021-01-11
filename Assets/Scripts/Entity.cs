@@ -26,6 +26,11 @@ public abstract class Entity : MonoBehaviour
     public float DY { get; protected set; } = 0f;
     public float Rotation { get; protected set; } = 0f;
 
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
+
     public virtual void DirectMove(float x, float y, float dx, float dy)
     {
         throw new Exception("Cannot move Entity with id " + ID);

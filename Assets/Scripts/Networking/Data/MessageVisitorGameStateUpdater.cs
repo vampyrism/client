@@ -53,8 +53,7 @@ namespace Assets.Server
               {
                   GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
                   Character KilledEntity = (Character)entity;
-                  float dmg = m.GetDamageAmount();
-                  KilledEntity.TakeDamage(dmg);
+                  KilledEntity.Destroy();
               }));
           }
 
@@ -100,10 +99,10 @@ namespace Assets.Server
                 {
                     GameManager.instance.Entities.TryGetValue(m.GetEntityID(), out Entity entity);
                     Character entityHP = (Character)entity;
-
                     entityHP.currentHealth = m.GetEntityHP();
-
                 }));
+                Debug.Log(m);
+                Debug.LogError("hello");
             }
 
             if (m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)

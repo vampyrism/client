@@ -273,7 +273,6 @@ public class NetworkClient
             foreach (Message message in messages)
             {
                 message.Accept(v);
-                Debug.Log(message);
             }
         }
 

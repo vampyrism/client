@@ -210,9 +210,10 @@ public class Player : Character {
         }
         playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
+
             GameManager.instance.HandleKilledPlayer(transform);
             GameManager.instance.GameOver();
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 
