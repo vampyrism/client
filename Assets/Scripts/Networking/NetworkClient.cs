@@ -201,7 +201,7 @@ public class NetworkClient
                         }
 
                         // TODO: Should try catch this as well / instead
-                        byte[] data = new byte[1024];
+                        byte[] data = new byte[2048];
                         //Debug.Log("feed me data");
                         data = this.socket.Receive(ref this.endPoint);
                         //Debug.Log("*nom* " + data);
@@ -273,6 +273,7 @@ public class NetworkClient
             foreach (Message message in messages)
             {
                 message.Accept(v);
+                Debug.Log(message);
             }
         }
 
