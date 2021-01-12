@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
 
     public void HandleAttack(UInt32 playerId, Vector2 clickPosition, short weaponType)
     {
-        AttackMessage m = new AttackMessage(0, playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1);
+        AttackMessage m = new AttackMessage(playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1);
         Debug.Log(m);
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
@@ -142,11 +142,9 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("GameOver");
     }
 
-    UInt16 mvseq = 0;
     public void UpdateEntityPosition(Entity e)
     {
         MovementMessage m = new MovementMessage(
-            this.mvseq,
             e.ID,
             0,
             0,
@@ -156,7 +154,6 @@ public class GameManager : MonoBehaviour
             e.DX,
             e.DY
             );
-        this.mvseq += 1;
 
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
