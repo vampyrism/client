@@ -84,20 +84,15 @@ public class Player : Character {
     }
     public override void DirectMove(float x, float y, float dx, float dy)
     {
-        float newdx = x - transform.position.x;
-        float newdy = y - transform.position.y;
-
-        Debug.Log("newdx: " + newdx + ", newdy: " + newdy);
-        if (Mathf.Abs(newdx) < 0.2 && Mathf.Abs(newdy) < 0.2) {
+        if (dx == 0 && dy == 0) {
             animator.SetBool("isMoving", false);
-        }
-        else {
-            SetFacingDirection(new Vector2(newdx, newdy));
+        } else {
+            SetFacingDirection(new Vector2(dx, dy));
             animator.SetBool("isMoving", true);
         }
 
         this.transform.position = new Vector3(x, y);
-        body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
+        //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
     public void StopMoving() {
         animator.SetBool("isMoving", false);
@@ -182,7 +177,7 @@ public class Player : Character {
             animator.SetTrigger("Attack");
 
             this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
-            
+
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
 
         } else {
@@ -198,7 +193,7 @@ public class Player : Character {
         Debug.Log("weaponType in FakeAttack: " + weaponType);
         Weapon w = weaponsList[weaponType].GetComponent<Weapon>();
         w.MakeAttack(targetPosition, this.transform.position, this.ID);
-        
+
     }
 
     public override void TakeDamage(float damage) {
