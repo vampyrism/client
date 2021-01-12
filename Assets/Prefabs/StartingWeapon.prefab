@@ -46,9 +46,12 @@ MonoBehaviour:
   weaponName: startingWeapon
   weaponIndex: 0
   weaponDamage: 1
-  reloadSpeed: 0.5
+  reloadSpeed: 1
   isRanged: 0
-  attackRangeX: 0.8
-  attackRangeY: 1.5
-  weaponDistanceFromPlayer: 1
-  offsetInYDirection: 0.6
+  attackRangeX: 1
+  attackRangeY: 0.8
+  weaponDistanceFromPlayer: 0.8
+  offsetInYDirection: 0
+  offsetInXDirection: 0
+  SwingAnimation: {fileID: 437238131752370461, guid: 2518fc215a2421743b75788187c44ae4,
+    type: 3}

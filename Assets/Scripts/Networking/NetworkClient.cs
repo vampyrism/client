@@ -133,12 +133,10 @@ public class NetworkClient
         }
     }
 
-    public void AckIncomingPacket(UDPPacket packet)
-    {
+    public void AckIncomingPacket(UDPPacket packet) {
         int i = packet.SequenceNumber % BufferSize;
 
-        if (packet.SequenceNumber > this.RemoteSeqNum)
-        {
+        if (packet.SequenceNumber > this.RemoteSeqNum) {
             this.RemoteSeqNum = packet.SequenceNumber;
         }
 
@@ -148,17 +146,13 @@ public class NetworkClient
 
 
         i = packet.AckNumber % BufferSize;
-        if (this.SendSequenceBuffer[i] == packet.AckNumber)
-        {
+        if (this.SendSequenceBuffer[i] == packet.AckNumber) {
             this.SendBuffer[i].Acked = true;
         }
 
-        for (UInt16 offset = 1; offset <= 32; offset++)
-        {
-            if (packet.AckArray[offset - 1])
-            {
-                if (this.SendSequenceBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)] == (packet.AckNumber - offset))
-                {
+        for (UInt16 offset = 1; offset <= 32; offset++) {
+            if (packet.AckArray[offset - 1]) {
+                if (this.SendSequenceBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)] == (packet.AckNumber - offset)) {
                     this.SendBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)].Acked = true;
                 }
             }

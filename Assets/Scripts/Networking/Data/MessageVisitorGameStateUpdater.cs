@@ -132,6 +132,7 @@ namespace Assets.Server
                     GameManager.instance.Entities.TryGetValue((UInt32)m.GetEntityID(), out Entity e);
                     Player p = (Player)e;
                     p.Controllable = true;
+                    p.SetupControllable();
                     GameManager.instance.currentPlayer = p;
 
                     p.gameObject.AddComponent<InputHandler>();
