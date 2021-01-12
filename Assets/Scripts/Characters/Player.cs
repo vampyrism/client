@@ -104,9 +104,14 @@ public class Player : Character {
     }
 
     public void SetFacingDirection(Vector2 direction) {
-        animator.SetFloat("xInput", direction.x);
-        animator.SetFloat("yInput", direction.y);
-    }
+        if (animator) {
+            animator.SetFloat("xInput", direction.x);
+            animator.SetFloat("yInput", direction.y);
+        } else {
+            animator = GetComponent<Animator>();
+            body = GetComponent<Rigidbody2D>();
+        }
+    } 
 
     public void TryGrabObject() {
         if (itemOnFloor == null) {
