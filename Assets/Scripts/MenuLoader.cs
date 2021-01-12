@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class MenuLoader : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        DontDestroyOnLoad(new GameObject("DiscordController").AddComponent<DiscordController>());
         DontDestroyOnLoad(Instantiate(eventSystem));
         Instantiate(menuCanvas);
     }

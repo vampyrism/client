@@ -8,10 +8,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
+using UnityEngine.Networking;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
+    public static string lobbyManager = "http://lobby.vampyrism.dev.deltafault.com";
+
+    public string LobbyId;
+    public LobbyResponse Lobby;
 
     private Pathfinding pathfinding;
 
@@ -48,7 +53,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        Screen.SetResolution(1280, 720, false);
+        //Screen.SetResolution(1280, 720, false);
         if (instance == null)
             instance = this;
         else if (instance != this) {
@@ -75,9 +80,27 @@ public class GameManager : MonoBehaviour
         currentPlayersField = GameObject.Find("CurrentPlayers").GetComponent<Text>();
         lobbyField = GameObject.Find("LobbyText").GetComponent<Text>();
 
-        DiscordController discordController = new GameObject("DiscordController").AddComponent<DiscordController>();
-
         NetworkClient c = NetworkClient.GetInstance();
+
+        LobbyId = Menu.instance.LobbyId;
+        Debug.Log("Finding lobby...");
+        UnityWebRequest wr = UnityWebRequest.Get(lobbyManager + "/api/lobby/id/" + LobbyId);
+        wr.SendWebRequest();
+        while (!wr.isDone) ;
+        try
+        {
+            LobbyResponse res = JsonUtility.FromJson<LobbyResponse>(wr.downloadHandler.text);
+            Debug.Log("Setting connection to " + res.metadata.ip + ":" + res.metadata.port);
+            c.ip = res.metadata.ip;
+            c.port = Convert.ToInt32(res.metadata.port);
+            Lobby = res;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(wr.downloadHandler.text);
+            Debug.LogError(e);
+        }
+
         c.Init();
     }
 
@@ -141,6 +164,16 @@ public class GameManager : MonoBehaviour
         this.mvseq += 1;
 
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
+    }
+
+    public void OnConnected()
+    {
+        Invoke("JoinLobby", 1);
+    }
+
+    public void JoinLobby()
+    {
+        DiscordController.instance.JoinLobby(Lobby.id, Lobby.secret);
     }
 
     public void DestroyEntityID(uint entityID) {

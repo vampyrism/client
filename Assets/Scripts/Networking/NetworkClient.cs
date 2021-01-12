@@ -12,13 +12,14 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Linq;
 using System.Collections.Concurrent;
+using System.IO.Pipes;
 
 public class NetworkClient
 {
     public static NetworkClient instance = new NetworkClient();
     public int myId = 0;
     public string ip = "127.0.0.1";
-    public int port = 9000;
+    public int port = 9001;
     public UDP udpInstance;
 
     #region sequence_numbers
@@ -236,6 +237,16 @@ public class NetworkClient
                 if(data.SequenceEqual(ASCIIEncoding.ASCII.GetBytes("VAMPIRES!")))
                 {
                     Debug.Log("Successfully connected");
+                    try
+                    {
+                        GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                        {
+                            GameManager.instance.OnConnected();
+                        }));
+                    } catch(Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
                     this.connected = true;
                     return;
                 }
@@ -247,7 +258,7 @@ public class NetworkClient
             {
                 if(retries >= 3) 
                 {
-                    Debug.LogWarning("Failed to connect");
+                    Debug.LogWarning("Failed to connect to " + endPoint);
                     break; 
                 }
 
