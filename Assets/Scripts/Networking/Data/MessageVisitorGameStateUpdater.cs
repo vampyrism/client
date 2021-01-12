@@ -160,7 +160,7 @@ namespace Assets.Server
                 }));
             }
         }
-
+        
         public void Visit(StateUpdateMessage m) {
             Debug.Log("Player got a StateUpdateMessage");
             if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.DAY) {
@@ -177,6 +177,7 @@ namespace Assets.Server
             }
         }
 
+        public void Visit(PlayerUpdateMessage m) { }
         public void Visit(Message m) { Debug.Log(m); }
     }
 }

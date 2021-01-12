@@ -86,6 +86,7 @@ public class Player : Character {
     {
         float newdx = x - transform.position.x;
         float newdy = y - transform.position.y;
+
         Debug.Log("newdx: " + newdx + ", newdy: " + newdy);
         if (Mathf.Abs(newdx) < 0.2 && Mathf.Abs(newdy) < 0.2) {
             animator.SetBool("isMoving", false);
@@ -201,7 +202,7 @@ public class Player : Character {
     }
 
     public override void TakeDamage(float damage) {
-        Debug.Log("Player took " + damage + " damage!");
+        //Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
         bloodAnimator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;

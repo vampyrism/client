@@ -3,7 +3,17 @@ guid: ab2fe8403cb47461f8f9ec40121dd03e
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - cone: {instanceID: 0}
+  - tileMap: {instanceID: 0}
+  - enemyPrefab: {instanceID: 0}
+  - playerPrefab: {instanceID: 0}
+  - otherPlayerPrefab: {instanceID: 0}
+  - bow: {instanceID: 0}
+  - crossbow: {instanceID: 0}
+  - gameCanvas: {fileID: 4135607907755975192, guid: f265376d8cff16c42a839baadd6aa30b,
+      type: 3}
+  - currentPlayer: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
