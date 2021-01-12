@@ -137,13 +137,8 @@ public class GameManager : MonoBehaviour
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
 
-    public void HandleKilledPlayer(Transform killedPlayer) {
-        foreach (GameObject enemyGameObject in enemyList) {
-            enemyGameObject.GetComponent<Enemy>().RemovePlayerFromTargets(killedPlayer);
-            }
-    }
-
     public void GameOver() {
+        NetworkClient.instance.Destroy();
         SceneManager.LoadScene("GameOver");
     }
 

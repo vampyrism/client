@@ -84,10 +84,10 @@ public class Player : Character {
     }
     public override void DirectMove(float x, float y, float dx, float dy)
     {
+        SetFacingDirection(new Vector2(dx, dy));
         if (dx == 0 && dy == 0) {
             animator.SetBool("isMoving", false);
         } else {
-            SetFacingDirection(new Vector2(dx, dy));
             animator.SetBool("isMoving", true);
         }
 
@@ -100,8 +100,13 @@ public class Player : Character {
     }
 
     public void SetFacingDirection(Vector2 direction) {
-        animator.SetFloat("xInput", direction.x);
-        animator.SetFloat("yInput", direction.y);
+        if (animator) {
+            animator.SetFloat("xInput", direction.x);
+            animator.SetFloat("yInput", direction.y);
+        } else {
+            body = GetComponent<Rigidbody2D>();
+            sprite = GetComponent<SpriteRenderer>();
+        }
     }
 
     public void TryGrabObject() {
@@ -206,8 +211,10 @@ public class Player : Character {
         }
         playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
-            GameManager.instance.HandleKilledPlayer(transform);
-            GameManager.instance.GameOver();
+            if (this.Controllable == true) {
+                GameManager.instance.GameOver();
+            }
+
             Destroy(gameObject);
         }
     }
