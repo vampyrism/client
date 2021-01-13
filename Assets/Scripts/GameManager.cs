@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
     {
         timeLeft = 5.0f;
         tileMap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
-        tileMap.Find("Grid").Find("ObstaclesOverPlayer").gameObject.GetComponent<TilemapRenderer>().sortingLayerName = "Unit";
+        //tileMap.Find("Grid").Find("ObstaclesOverPlayer").gameObject.GetComponent<TilemapRenderer>().sortingLayerName = "Unit";
         pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
 
     public void HandleAttack(UInt32 playerId, Vector2 clickPosition, short weaponType)
     {
-        AttackMessage m = new AttackMessage(playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1);
+        AttackMessage m = new AttackMessage(playerId, 0, 0, 0, weaponType, 0, 0, clickPosition.x, clickPosition.y, 1, 0);
         Debug.Log(m);
         NetworkClient.GetInstance().MessageQueue.Enqueue(m);
     }
@@ -195,5 +195,14 @@ public class GameManager : MonoBehaviour
 
     public void OnDestroy() {
         NetworkClient.GetInstance().Destroy();
+    }
+
+    public void HandleKilledPlayer(Transform killedPlayer)
+    {
+        foreach (GameObject enemyGameObject in enemyList)
+        {
+            enemyGameObject.GetComponent<Enemy>().RemovePlayerFromTargets(killedPlayer);
+            enemyGameObject.GetComponent<Enemy>().RemovePlayerFromTargets(killedPlayer);
+        }
     }
 }

@@ -114,6 +114,7 @@ namespace Assets.Server
         {
             return BitConverter.ToSingle(message, ENTITY_HP);
         }
+
         public override byte[] Serialize() => this.message;
 
         public override int Size() => MESSAGE_SIZE;

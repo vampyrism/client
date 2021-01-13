@@ -13,7 +13,7 @@ namespace Assets.Server
     public class AttackMessage : Message
     {
         // Total size of message
-        public static readonly int MESSAGE_SIZE = 24;
+        public static readonly int MESSAGE_SIZE = 25;
 
         // Indices for the values in the message
         // Bytes   | Description

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 // This is an abstract class for implementing different kinds of messages.
 // Can also deserialize a message and its' type from bytes. 
@@ -38,6 +39,7 @@ namespace Assets.Server
         public static Message Deserialize(byte[] bytes, int cursor, UInt16 seqnum)
         {
             byte type = bytes[cursor];
+            Debug.LogWarning(type);
             Message m = (Message)typeConstructors[type].DynamicInvoke(bytes, cursor);
             m.SequenceNumber = seqnum;
             return m;
