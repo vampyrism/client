@@ -106,6 +106,7 @@ public class Player : Character {
         } else {
             body = GetComponent<Rigidbody2D>();
             sprite = GetComponent<SpriteRenderer>();
+            animator = GetComponent<Animator>();
         }
     }
 
