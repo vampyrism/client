@@ -90,10 +90,11 @@ public class NetworkClient
         {
             int index = (UInt16)(this.LocalSeqNum - (UInt16)(i * 30)) % BufferSize;
 
-            if (this.SendSequenceBuffer[index] == (UInt16)(this.LocalSeqNum - (UInt16)(i * 30)))
+            if (this.SendSequenceBuffer[index] == index)
             {
                 if (!this.SendBuffer[index].Acked)
                 {
+                    Debug.LogWarning("Resending packet with seqid " + index);
                     this.PacketQueue.Enqueue(this.SendBuffer[index].Packet);
                 }
             }
