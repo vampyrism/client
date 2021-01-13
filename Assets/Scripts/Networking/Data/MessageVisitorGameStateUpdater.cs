@@ -13,7 +13,6 @@ namespace Assets.Server
         {
             //Debug.Log(m);
 
-
             GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                 GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity e);
                 //Player p = (Player)e.gameObject.GetComponent<Player>();
@@ -22,11 +21,6 @@ namespace Assets.Server
                 {
                     return;
                 }*/
-
-                if(e.LastUpdate > m.SequenceNumber)
-                {
-                    return;
-                }
 
                 if (Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
                 {
@@ -38,8 +32,6 @@ namespace Assets.Server
                 {
                     e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
                 }
-
-                e.LastUpdate = m.SequenceNumber;
             }));
         }
 
