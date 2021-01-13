@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,8 +35,19 @@ namespace Assets.Server
             }));
         }
 
+
         public void Visit(AttackMessage m)
         {
+          if (m.GetEntityKilled() == 1)
+          {
+              GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+              {
+                  GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity entity);
+                  Character KilledEntity = (Character)entity;
+                  KilledEntity.Destroy();
+              }));
+          }
+
           if (m.GetAttackValid() == 1)
           {
               GameManager.instance.TaskQueue.Enqueue(new Action(() =>
@@ -70,8 +81,18 @@ namespace Assets.Server
         }
 
         public void Visit(EntityUpdateMessage m)
-        {
-            Debug.Log(m);
+        {    
+            if (m.GetEntityAction() == EntityUpdateMessage.Action.HP_UPDATE)
+            {
+                GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                {
+                    GameManager.instance.Entities.TryGetValue(m.GetEntityID(), out Entity entity);
+                    Character entityHP = (Character)entity;
+                    entityHP.currentHealth = m.GetEntityHP();
+                }));
+            }
+
+            
             if(m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
             {
                 if(GameManager.instance.Entities.ContainsKey(m.GetEntityID()))

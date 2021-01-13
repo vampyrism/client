@@ -30,7 +30,7 @@ public class Enemy : Character
     // UI elements
     [SerializeField] private HealthBar enemyHealthBar;
 
-    void Start()
+    void Awake()
     {
         enemyHealthBar.SetMaxHealth(maxHealth);
         body = GetComponent<Rigidbody2D>();
@@ -48,7 +48,7 @@ public class Enemy : Character
         currentHealth = currentHealth - damage;
         enemyHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 

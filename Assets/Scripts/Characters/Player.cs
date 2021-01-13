@@ -1,4 +1,4 @@
-﻿using Assets.Server;
+using Assets.Server;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -202,7 +202,7 @@ public class Player : Character {
     }
 
     public override void TakeDamage(float damage) {
-        //Debug.Log("Player took " + damage + " damage!");
+        Debug.Log("Player took " + damage + " damage!");
         animator.SetTrigger("Hit");
         bloodAnimator.SetTrigger("Hit");
         currentHealth = currentHealth - damage;
@@ -211,11 +211,10 @@ public class Player : Character {
         }
         playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0) {
-            if (this.Controllable == true) {
-                GameManager.instance.GameOver();
-            }
 
-            Destroy(gameObject);
+            GameManager.instance.HandleKilledPlayer(transform);
+            GameManager.instance.GameOver();
+            //Destroy(gameObject);
         }
     }
 
