@@ -133,13 +133,19 @@ public class NetworkClient
         }
     }
 
-    public void AckIncomingPacket(UDPPacket packet) {
+    public bool AckIncomingPacket(UDPPacket packet) {
+        bool result = false;
         int i = packet.SequenceNumber % BufferSize;
 
         if (packet.SequenceNumber > this.RemoteSeqNum) {
             this.RemoteSeqNum = packet.SequenceNumber;
         }
 
+        if (this.ReceiveSequenceBuffer[i] != packet.SequenceNumber
+            && !this.ReceiveBuffer[i].Acked)
+        {
+            result = true;
+        }
         this.ReceiveSequenceBuffer[i] = packet.SequenceNumber;
         this.ReceiveBuffer[i].Acked = true;
         this.ReceiveBuffer[i].Packet = packet;
@@ -157,6 +163,8 @@ public class NetworkClient
                 }
             }
         }
+
+        return result;
     }
 
     public void Destroy()
@@ -275,7 +283,10 @@ public class NetworkClient
             UDPPacket packet = new UDPPacket(data);
 
             #region ackpacket
-            NetworkClient.GetInstance().AckIncomingPacket(packet);
+            if(!NetworkClient.GetInstance().AckIncomingPacket(packet))
+            {
+                return;
+            }
             #endregion
 
             List<Message> messages = packet.GetMessages();
