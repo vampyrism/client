@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
     {
         timeLeft = 5.0f;
         tileMap = Instantiate(tileMap, new Vector3(0f, 100f), Quaternion.identity);
-        //tileMap.Find("Grid").Find("ObstaclesOverPlayer").gameObject.GetComponent<TilemapRenderer>().sortingLayerName = "Unit";
+        tileMap.Find("Grid").Find("ObstaclesOverPlayer").gameObject.GetComponent<TilemapRenderer>().sortingLayerName = "Unit";
         pathfinding = new Pathfinding(gridHeight, gridWidth, cellSize);
 
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
