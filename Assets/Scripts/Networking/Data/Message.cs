@@ -39,7 +39,6 @@ namespace Assets.Server
         public static Message Deserialize(byte[] bytes, int cursor, UInt16 seqnum)
         {
             byte type = bytes[cursor];
-            Debug.LogWarning(type);
             Message m = (Message)typeConstructors[type].DynamicInvoke(bytes, cursor);
             m.SequenceNumber = seqnum;
             return m;
