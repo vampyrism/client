@@ -10,7 +10,6 @@ public class OtherPlayer : Character
         Debug.Log("OtherPlayer took " + damage + " damage!");
         currentHealth = currentHealth - damage;
         if (currentHealth <= 0) {
-            GameManager.instance.HandleKilledPlayer(transform);
             Destroy(gameObject);
         }
     }

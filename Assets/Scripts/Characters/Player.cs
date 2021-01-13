@@ -1,4 +1,4 @@
-﻿using Assets.Server;
+using Assets.Server;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -84,19 +84,15 @@ public class Player : Character {
     }
     public override void DirectMove(float x, float y, float dx, float dy)
     {
-        float newdx = x - transform.position.x;
-        float newdy = y - transform.position.y;
-        Debug.Log("newdx: " + newdx + ", newdy: " + newdy);
-        if (Mathf.Abs(newdx) < 0.2 && Mathf.Abs(newdy) < 0.2) {
+        SetFacingDirection(new Vector2(dx, dy));
+        if (dx == 0 && dy == 0) {
             animator.SetBool("isMoving", false);
-        }
-        else {
-            SetFacingDirection(new Vector2(newdx, newdy));
+        } else {
             animator.SetBool("isMoving", true);
         }
 
         this.transform.position = new Vector3(x, y);
-        body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
+        //body.AddForce(new Vector2(dx, dy), ForceMode2D.Impulse);
     }
     public void StopMoving() {
         animator.SetBool("isMoving", false);
@@ -108,10 +104,10 @@ public class Player : Character {
             animator.SetFloat("xInput", direction.x);
             animator.SetFloat("yInput", direction.y);
         } else {
-            animator = GetComponent<Animator>();
             body = GetComponent<Rigidbody2D>();
+            sprite = GetComponent<SpriteRenderer>();
         }
-    } 
+    }
 
     public void TryGrabObject() {
         if (itemOnFloor == null) {
@@ -186,7 +182,7 @@ public class Player : Character {
             animator.SetTrigger("Attack");
 
             this.equippedWeapon.MakeAttack(targetPosition, transform.position, this.ID);
-            
+
             timestampForNextAction = Time.time + equippedWeapon.reloadSpeed;
 
         } else {
@@ -202,7 +198,7 @@ public class Player : Character {
         Debug.Log("weaponType in FakeAttack: " + weaponType);
         Weapon w = weaponsList[weaponType].GetComponent<Weapon>();
         w.MakeAttack(targetPosition, this.transform.position, this.ID);
-        
+
     }
 
     public override void TakeDamage(float damage) {

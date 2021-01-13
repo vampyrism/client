@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,13 +12,14 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Linq;
 using System.Collections.Concurrent;
+using System.IO.Pipes;
 
 public class NetworkClient
 {
     public static NetworkClient instance = new NetworkClient();
     public int myId = 0;
     public string ip = "127.0.0.1";
-    public int port = 9000;
+    public int port = 9001;
     public UDP udpInstance;
 
     #region sequence_numbers
@@ -132,13 +133,19 @@ public class NetworkClient
         }
     }
 
-    public void AckIncomingPacket(UDPPacket packet) {
+    public bool AckIncomingPacket(UDPPacket packet) {
+        bool result = false;
         int i = packet.SequenceNumber % BufferSize;
 
         if (packet.SequenceNumber > this.RemoteSeqNum) {
             this.RemoteSeqNum = packet.SequenceNumber;
         }
 
+        if (this.ReceiveSequenceBuffer[i] != packet.SequenceNumber
+            && !this.ReceiveBuffer[i].Acked)
+        {
+            result = true;
+        }
         this.ReceiveSequenceBuffer[i] = packet.SequenceNumber;
         this.ReceiveBuffer[i].Acked = true;
         this.ReceiveBuffer[i].Packet = packet;
@@ -156,6 +163,8 @@ public class NetworkClient
                 }
             }
         }
+
+        return result;
     }
 
     public void Destroy()
@@ -201,7 +210,7 @@ public class NetworkClient
                         }
 
                         // TODO: Should try catch this as well / instead
-                        byte[] data = new byte[2048];
+                        byte[] data = new byte[1024];
                         //Debug.Log("feed me data");
                         data = this.socket.Receive(ref this.endPoint);
                         //Debug.Log("*nom* " + data);
@@ -236,6 +245,16 @@ public class NetworkClient
                 if(data.SequenceEqual(ASCIIEncoding.ASCII.GetBytes("VAMPIRES!")))
                 {
                     Debug.Log("Successfully connected");
+                    try
+                    {
+                        GameManager.instance.TaskQueue.Enqueue(new Action(() =>
+                        {
+                            GameManager.instance.OnConnected();
+                        }));
+                    } catch(Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
                     this.connected = true;
                     return;
                 }
@@ -247,7 +266,7 @@ public class NetworkClient
             {
                 if(retries >= 3) 
                 {
-                    Debug.LogWarning("Failed to connect");
+                    Debug.LogWarning("Failed to connect to " + endPoint);
                     break; 
                 }
 
@@ -264,7 +283,10 @@ public class NetworkClient
             UDPPacket packet = new UDPPacket(data);
 
             #region ackpacket
-            NetworkClient.GetInstance().AckIncomingPacket(packet);
+            if(!NetworkClient.GetInstance().AckIncomingPacket(packet))
+            {
+                return;
+            }
             #endregion
 
             List<Message> messages = packet.GetMessages();

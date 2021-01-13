@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -186,8 +185,7 @@ namespace Assets.Server
 
             while (cursor < length)
             {
-                Message message = Message.Deserialize(bytes, cursor);
-                message.SequenceNumber = this.SequenceNumber;
+                Message message = Message.Deserialize(bytes, cursor, this.SequenceNumber);
                 AddMessage(message);
                 cursor += message.Size();
             }

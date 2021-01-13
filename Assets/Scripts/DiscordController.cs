@@ -1,16 +1,26 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using Discord;
+using System.ComponentModel;
+using System;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Runtime.CompilerServices;
 
 namespace Assets.Scripts
 {
+    
     public class DiscordController : MonoBehaviour
     {
+        public static DiscordController instance;
         public Discord.Discord discord;
+        private bool ready = false;
 
         // Use this for initialization
         void Start()
         {
+            DiscordController.instance = this;
+            System.Environment.SetEnvironmentVariable("DISCORD_INSTANCE_ID", "0");
             this.discord = new Discord.Discord(785086130143887391, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
             this.discord.SetLogHook(Discord.LogLevel.Debug, (Discord.LogLevel level, string message) =>
             {
@@ -20,23 +30,7 @@ namespace Assets.Scripts
 
             var activity = new Discord.Activity
             {
-                State = "In-Game",
-                Details = "With tons of other players",
-                Party = new Discord.ActivityParty
-                {
-                    Id = "secretysecretparty",
-                    Size = new Discord.PartySize
-                    {
-                        CurrentSize = 1,
-                        MaxSize = 100
-                    }
-                },
-                Secrets = new Discord.ActivitySecrets
-                {
-                    Match = "secretmatchsecret",
-                    Join = "secretjoinsecret",
-                    Spectate = "secretspectatesecret"
-                }
+                State = "Chilling in the menu"
             };
 
             activityManager.UpdateActivity(activity, (res) =>
@@ -47,47 +41,69 @@ namespace Assets.Scripts
                 }
             });
 
-            /*var lobbyManager = discord.GetLobbyManager();
-            var txn = lobbyManager.GetLobbyCreateTransaction();
-
-            // Set lobby information
-            txn.SetCapacity(100);
-            txn.SetType(Discord.LobbyType.Public);
-
-            lobbyManager.CreateLobby(txn, (Discord.Result result, ref Discord.Lobby lobby) =>
+            activityManager.OnActivityJoin += secret =>
             {
-                Debug.Log("lobby " + lobby.Id + " created with secret " + lobby.Secret);
+                secret = secret.Split(':')[1];
+                Menu.instance.LobbyId = secret;
+                Menu.instance.hideMenu();
+                SceneManager.LoadScene("Game");
+            };
 
-                var a = new Discord.Activity
-                {
-                    Party =
+            this.ready = true;
+        }
+
+        public void JoinLobby(string id, string secret)
+        {
+            var activity = new Discord.Activity
+            {
+                State = "In-Game",
+                Details = "Surviving...for now.",
+                Instance = true,
+                Party =
                     {
-                        Id = lobby.Id.ToString(),
+                        Id = id,
                         Size =
                         {
                             CurrentSize = 1,
-                            MaxSize = (int) lobby.Capacity
+                            MaxSize = 150
                         }
                     },
-                    Secrets =
+                Secrets =
                     {
-                        Join = lobbyManager.GetLobbyActivitySecret(lobby.Id)
+                        Join = "secret:" + id
                     }
-                };
+            };
 
-                activityManager.UpdateActivity(a, (Discord.Result res) =>
+            discord.GetActivityManager().UpdateActivity(activity, (res) =>
+            {
+                if (res == Discord.Result.Ok)
                 {
-                });
-
-                lobbyManager.ConnectVoice(lobby.Id, (Discord.Result res) =>
+                    Debug.Log("Discord Controller is OK!");
+                }
+                else
                 {
-                    Debug.Log("Voice status: " + res);
-                });
+                    Debug.LogWarning("Couldn't set user activity due to " + res);
+                }
             });
+        }
 
-            lobbyManager.OnSpeaking += (System.Int64 lobby, System.Int64 userId, bool speaking) => {
-                Debug.Log("In lobby " + lobby + " user with id " + userId + " is speaking " + speaking);
-            };*/
+        Action<string> callback;
+        public void GetAndSetTextComponentName(Action<string> callback)
+        {
+            this.callback = callback;
+            try
+            {
+                Debug.Log("Name is " + discord.GetUserManager().GetCurrentUser().Username);
+                this.callback(discord.GetUserManager().GetCurrentUser().Username);
+            } catch(Discord.ResultException e) { }
+
+            discord.GetUserManager().OnCurrentUserUpdate += DiscordController_OnCurrentUserUpdate;
+        }
+
+        private void DiscordController_OnCurrentUserUpdate()
+        {
+            Debug.Log("Name is " + discord.GetUserManager().GetCurrentUser().Username);
+            this.callback(discord.GetUserManager().GetCurrentUser().Username);
         }
 
         // Update is called once per frame

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,6 @@ namespace Assets.Server
         {
             //Debug.Log(m);
 
-
             GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                 GameManager.instance.Entities.TryGetValue(m.GetEntityId(), out Entity e);
                 //Player p = (Player)e.gameObject.GetComponent<Player>();
@@ -22,11 +21,6 @@ namespace Assets.Server
                 {
                     return;
                 }*/
-
-                if(e.LastUpdate > m.SequenceNumber)
-                {
-                    return;
-                }
 
                 if (Vector2.Distance(e.transform.position, new Vector2(m.GetXCoordinate(), m.GetYCoordinate())) > 2)
                 {
@@ -38,15 +32,12 @@ namespace Assets.Server
                 {
                     e.DirectMove(m.GetXCoordinate(), m.GetYCoordinate(), m.GetXVelocity(), m.GetYVelocity());
                 }
-
-                e.LastUpdate = m.SequenceNumber;
             }));
         }
 
+
         public void Visit(AttackMessage m)
         {
-
-
           if (m.GetEntityKilled() == 1)
           {
               GameManager.instance.TaskQueue.Enqueue(new Action(() =>
@@ -90,7 +81,7 @@ namespace Assets.Server
         }
 
         public void Visit(EntityUpdateMessage m)
-        {
+        {    
             if (m.GetEntityAction() == EntityUpdateMessage.Action.HP_UPDATE)
             {
                 GameManager.instance.TaskQueue.Enqueue(new Action(() =>
@@ -101,7 +92,8 @@ namespace Assets.Server
                 }));
             }
 
-            if (m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
+            
+            if(m.GetEntityAction() == EntityUpdateMessage.Action.CREATE)
             {
                 if(GameManager.instance.Entities.ContainsKey(m.GetEntityID()))
                 {
@@ -113,6 +105,7 @@ namespace Assets.Server
                     GameManager.instance.TaskQueue.Enqueue(new Action(() => {
                         // Refactor out!
                         Player p = (Player) GameObject.Instantiate(Resources.Load<GameObject>("Player")).GetComponent<Player>();
+                        GameManager.instance.countNewPlayer();
                         p.ID = m.GetEntityID();
                         GameManager.instance.Entities.TryAdd(p.ID, p);
                     }));
@@ -181,7 +174,7 @@ namespace Assets.Server
                 }));
             }
         }
-
+        
         public void Visit(StateUpdateMessage m) {
             Debug.Log("Player got a StateUpdateMessage");
             if (m.GetUpdateDescriptor() == StateUpdateMessage.Descriptor.DAY) {
@@ -198,6 +191,7 @@ namespace Assets.Server
             }
         }
 
+        public void Visit(PlayerUpdateMessage m) { }
         public void Visit(Message m) { Debug.Log(m); }
     }
 }
