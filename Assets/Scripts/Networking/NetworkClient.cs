@@ -80,9 +80,9 @@ public class NetworkClient
         #region resend_packets
         for (int i = 1; i <= 2; i++)
         {
-            int index = (UInt16)(this.LocalSeqNum - (UInt16)(i * 15)) % BufferSize;
+            int index = (UInt16)(this.LocalSeqNum - i * 30) % BufferSize;
 
-            if (this.SendSequenceBuffer[index] == (UInt16)(this.LocalSeqNum - (UInt16)(i * 15)))
+            if (this.SendSequenceBuffer[index] == (UInt16)(this.LocalSeqNum - (UInt16)(i * 30)))
             {
                 if (!this.SendBuffer[index].Acked)
                 {
