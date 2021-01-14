@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         Instantiate(gameCanvas, new Vector3(0, 0), Quaternion.identity);
         totalPlayersField = GameObject.Find("TotalPlayers").GetComponent<Text>();
         currentPlayersField = GameObject.Find("CurrentPlayers").GetComponent<Text>();
-        lobbyField = GameObject.Find("LobbyText").GetComponent<Text>();
+        //lobbyField = GameObject.Find("LobbyText").GetComponent<Text>();
 
         NetworkClient c = NetworkClient.GetInstance();
 
@@ -189,9 +189,11 @@ public class GameManager : MonoBehaviour
         this.totalPlayersField.text = this.totalPlayersCount.ToString();
     }
     
+    /*
     public void disableLobbyText() {
         this.lobbyField.enabled = false;
     }
+    */
 
     public void OnDestroy() {
         NetworkClient.GetInstance().Destroy();
