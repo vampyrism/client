@@ -138,8 +138,8 @@ public class GameManager : MonoBehaviour
     }
 
     public void GameOver() {
-        NetworkClient.instance.Destroy();
         SceneManager.LoadScene("GameOver");
+        NetworkClient.instance.Destroy();
     }
 
     public void UpdateEntityPosition(Entity e)
