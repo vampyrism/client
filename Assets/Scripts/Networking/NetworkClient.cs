@@ -32,7 +32,6 @@ public class NetworkClient
     private static readonly int BufferSize = 1024;
     public UInt32[] ReceiveSequenceBuffer { get; private set; } = new UInt32[BufferSize];
     public UInt32[] SendSequenceBuffer { get; private set; } = new UInt32[BufferSize];
-    public UDPAckPacket[] ReceiveBuffer { get; private set; } = new UDPAckPacket[BufferSize];
     public UDPAckPacket[] SendBuffer { get; private set; } = new UDPAckPacket[BufferSize];
     #endregion
 
@@ -48,7 +47,6 @@ public class NetworkClient
         this.LocalSeqNum = 0;
         this.ReceiveSequenceBuffer = new UInt32[BufferSize];
         this.SendSequenceBuffer = new UInt32[BufferSize];
-        this.ReceiveBuffer = new UDPAckPacket[BufferSize];
         this.SendBuffer = new UDPAckPacket[BufferSize];
 
         for (int i = 0; i < BufferSize; i++)
@@ -66,6 +64,16 @@ public class NetworkClient
     {
         UDPPacket p = BuildPacket();
 
+        for (int offset = 0; offset < 32; offset++)
+        {
+            int i = ((UInt16)(this.RemoteSeqNum - offset)) % BufferSize;
+
+            if (this.ReceiveSequenceBuffer[i] == (UInt16)(this.RemoteSeqNum - offset))
+            {
+                p.AckPacket((UInt16)(this.RemoteSeqNum - offset));
+            }
+        }
+
         this.SendBuffer[this.LocalSeqNum % BufferSize] = new UDPAckPacket
         {
             Acked = false,
@@ -80,12 +88,13 @@ public class NetworkClient
         #region resend_packets
         for (int i = 1; i <= 2; i++)
         {
-            int index = (UInt16)(this.LocalSeqNum - i * 30) % BufferSize;
+            int index = (UInt16)(this.LocalSeqNum - (UInt16)(i * 30)) % BufferSize;
 
-            if (this.SendSequenceBuffer[index] == (UInt16)(this.LocalSeqNum - (UInt16)(i * 30)))
+            if (this.SendSequenceBuffer[index] == index)
             {
                 if (!this.SendBuffer[index].Acked)
                 {
+                    Debug.LogWarning("Resending packet with seqid " + index);
                     this.PacketQueue.Enqueue(this.SendBuffer[index].Packet);
                 }
             }
@@ -133,33 +142,36 @@ public class NetworkClient
         }
     }
 
-    public bool AckIncomingPacket(UDPPacket packet) {
+    public bool AckIncomingPacket(UDPPacket packet)
+    {
         bool result = false;
         int i = packet.SequenceNumber % BufferSize;
 
-        if (packet.SequenceNumber > this.RemoteSeqNum) {
+        if (packet.SequenceNumber > this.RemoteSeqNum)
+        {
             this.RemoteSeqNum = packet.SequenceNumber;
         }
 
-        if (this.ReceiveSequenceBuffer[i] != packet.SequenceNumber
-            && !this.ReceiveBuffer[i].Acked)
+        if (this.ReceiveSequenceBuffer[i] != packet.SequenceNumber)
         {
             result = true;
         }
         this.ReceiveSequenceBuffer[i] = packet.SequenceNumber;
-        this.ReceiveBuffer[i].Acked = true;
-        this.ReceiveBuffer[i].Packet = packet;
 
 
         i = packet.AckNumber % BufferSize;
-        if (this.SendSequenceBuffer[i] == packet.AckNumber) {
+        if (this.SendSequenceBuffer[i] == packet.AckNumber)
+        {
             this.SendBuffer[i].Acked = true;
         }
 
-        for (UInt16 offset = 1; offset <= 32; offset++) {
-            if (packet.AckArray[offset - 1]) {
-                if (this.SendSequenceBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)] == (packet.AckNumber - offset)) {
-                    this.SendBuffer[WrapArray((packet.AckNumber - offset) % BufferSize)].Acked = true;
+        for (int offset = 1; offset <= 32; offset++)
+        {
+            if (packet.AckArray.Get(offset - 1))
+            {
+                if (this.SendSequenceBuffer[((UInt16)(packet.AckNumber - offset)) % BufferSize] == (packet.AckNumber - offset))
+                {
+                    this.SendBuffer[((UInt16)(packet.AckNumber - offset)) % BufferSize].Acked = true;
                 }
             }
         }
@@ -285,6 +297,7 @@ public class NetworkClient
             #region ackpacket
             if(!NetworkClient.GetInstance().AckIncomingPacket(packet))
             {
+                Debug.LogWarning("ignored packet with seq " + packet.SequenceNumber);
                 return;
             }
             #endregion
